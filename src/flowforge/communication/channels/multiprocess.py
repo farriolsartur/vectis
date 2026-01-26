@@ -1,10 +1,20 @@
-"""Multiprocess channel implementations using multiprocessing queues."""
+"""Multiprocess channel implementations.
+
+These channels support cross-process communication using queue-like objects.
+The factory typically provides manager-backed queue proxies (via BaseManager)
+rather than direct multiprocessing.Queue instances. This design enables:
+- Named queue lookup across workers
+- Centralized lifecycle management
+- Built-in connection retry logic
+
+Both manager proxies and direct multiprocessing.Queue are supported as they
+share the same put/get/full API.
+"""
 
 from __future__ import annotations
 
 import asyncio
 import logging
-import multiprocessing
 import queue as queue_module
 from concurrent.futures import ThreadPoolExecutor
 from typing import TYPE_CHECKING, Any, Awaitable, Callable
@@ -24,7 +34,7 @@ class AsyncQueueWrapper:
 
     def __init__(
         self,
-        queue: multiprocessing.Queue[Any],
+        queue: Any,  # Manager proxy or multiprocessing.Queue
         executor: ThreadPoolExecutor | None = None,
     ) -> None:
         self._queue = queue
@@ -78,7 +88,7 @@ class MultiprocessOutputChannel:
 
     def __init__(
         self,
-        queue: multiprocessing.Queue[Any],
+        queue: Any,  # Manager proxy or multiprocessing.Queue
         serializer: Serializer,
         *,
         name: str | None = None,
@@ -135,7 +145,7 @@ class MultiprocessInputChannel:
 
     def __init__(
         self,
-        queue: multiprocessing.Queue[Any],
+        queue: Any,  # Manager proxy or multiprocessing.Queue
         serializer: Serializer,
         *,
         name: str | None = None,

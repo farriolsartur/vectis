@@ -317,6 +317,10 @@ class ConfigLoader:
         # source -> (connection_index, effective_distribution, effective_strategy)
         source_settings: dict[str, tuple[int, str, str]] = {}
 
+        # Track fixed ports for collision detection
+        # port -> (connection_index, source, target)
+        fixed_ports: dict[int, tuple[int, str, str]] = {}
+
         for i, conn in enumerate(config.connections):
             # Validate source
             if conn.source not in instance_names:
@@ -355,6 +359,26 @@ class ConfigLoader:
                     )
             else:
                 source_settings[conn.source] = (i, effective_dist, effective_strat)
+
+            # Validate ports field
+            if conn.ports:
+                for target, port in conn.ports.items():
+                    # Check: port key must be valid target
+                    if target not in conn.targets:
+                        errors.append(
+                            f"Connection {i}: port specified for '{target}' "
+                            f"but '{target}' is not in targets list {conn.targets}"
+                        )
+                    # Check: no duplicate fixed ports
+                    if port in fixed_ports:
+                        prev_idx, prev_source, prev_target = fixed_ports[port]
+                        errors.append(
+                            f"Connection {i}: port {port} for "
+                            f"'{conn.source}->{target}' conflicts with "
+                            f"connection {prev_idx}: '{prev_source}->{prev_target}'"
+                        )
+                    else:
+                        fixed_ports[port] = (i, conn.source, target)
 
         return errors
 

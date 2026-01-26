@@ -357,7 +357,22 @@ class ChannelFactory:
         return manager
 
     def create_multiprocess_queue(self, name: str, maxsize: int = 0) -> Any:
-        """Create or fetch a shared multiprocess queue by name."""
+        """Create or fetch a shared multiprocess queue by name.
+
+        Returns a manager-backed queue proxy rather than a direct
+        multiprocessing.Queue. This provides named queue coordination
+        across workers and centralized lifecycle management.
+
+        The returned proxy supports the standard queue API:
+        put, get, full, qsize, empty, put_nowait, get_nowait.
+
+        Args:
+            name: Unique queue identifier for cross-worker coordination.
+            maxsize: Maximum queue size (0 = unlimited).
+
+        Returns:
+            Manager proxy to a queue.Queue instance.
+        """
         manager = self._get_mp_manager()
         queue = manager.get_queue(name, maxsize)
         self._mp_queues[name] = queue

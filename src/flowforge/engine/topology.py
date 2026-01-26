@@ -7,6 +7,7 @@ with all settings merged from defaults.
 
 from __future__ import annotations
 
+import hashlib
 import logging
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
@@ -159,11 +160,18 @@ class TopologyResolver:
                     if target_worker is None:
                         target_worker = worker_name
                     target_host = worker_hosts.get(target_worker, "localhost")
+
+                    # Get fixed port if specified
+                    fixed_port = None
+                    if connection.ports and target in connection.ports:
+                        fixed_port = connection.ports[target]
+
                     endpoint = self._generate_endpoint(
                         connection.source,
                         target,
                         target_host,
                         config,
+                        fixed_port=fixed_port,
                     )
 
                 resolved.append(
@@ -257,25 +265,41 @@ class TopologyResolver:
         target: str,
         target_host: str,
         config: PipelineConfig,
+        fixed_port: int | None = None,
     ) -> str:
-        """Generate a stable endpoint for a distributed connection."""
-        import hashlib
+        """Generate a stable endpoint for a distributed connection.
 
+        Args:
+            source: Source component name.
+            target: Target component name.
+            target_host: Host where target component runs.
+            config: Pipeline configuration.
+            fixed_port: Optional fixed port override. If provided, skips
+                hash-based port generation.
+
+        Returns:
+            Endpoint URL string (e.g., "tcp://host:port").
+        """
         transport = config.global_config.transport
         transport_cfg = transport.config if transport else {}
 
-        base_port = int(transport_cfg.get("base_port", 5555))
-        port_range = int(transport_cfg.get("port_range", 1000))
         protocol = transport_cfg.get("protocol", "tcp")
         template = transport_cfg.get("endpoint_template")
 
-        if port_range <= 0:
-            port_range = 1
+        # Determine port: use fixed port or fall back to hash
+        if fixed_port is not None:
+            port = fixed_port
+        else:
+            base_port = int(transport_cfg.get("base_port", 5555))
+            port_range = int(transport_cfg.get("port_range", 1000))
 
-        key = f"{source}->{target}"
-        digest = hashlib.sha256(key.encode("utf-8")).digest()
-        offset = int.from_bytes(digest[:4], "big") % port_range
-        port = base_port + offset
+            if port_range <= 0:
+                port_range = 1
+
+            key = f"{source}->{target}"
+            digest = hashlib.sha256(key.encode("utf-8")).digest()
+            offset = int.from_bytes(digest[:4], "big") % port_range
+            port = base_port + offset
 
         if template:
             return template.format(

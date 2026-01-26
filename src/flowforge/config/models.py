@@ -33,6 +33,12 @@ class BackpressureConfig(BaseModel):
     Attributes:
         mode: How to handle full queues (block or drop).
         queue_size: Maximum queue size before backpressure triggers.
+            Used by INPROCESS and MULTIPROCESS channels.
+
+    Note:
+        For DISTRIBUTED (ZMQ) channels, backpressure is controlled by
+        ``transport.config.high_water_mark`` instead of ``queue_size``.
+        ZMQ uses socket-level high water marks rather than queue depths.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -93,7 +99,14 @@ class TransportConfig(BaseModel):
 
     Attributes:
         type: Transport type identifier.
-        config: Transport-specific configuration.
+        config: Transport-specific configuration. Supported keys:
+            - ``high_water_mark`` (int): ZMQ socket buffer limit for
+              backpressure (default: 1000). Controls how many messages
+              can be buffered before ZMQ blocks or drops.
+            - ``base_port`` (int): Starting port for ZMQ endpoints.
+            - ``port_range`` (int): Port range for endpoint generation.
+            - ``protocol`` (str): ZMQ protocol (default: "tcp").
+            - ``endpoint_template`` (str): Custom endpoint format string.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -150,6 +163,9 @@ class ConnectionConfig(BaseModel):
         strategy: Competing strategy (overrides defaults).
         serialization: Serializer to use (overrides defaults).
         backpressure: Backpressure config (overrides defaults).
+        ports: Per-target port overrides for distributed transport. Keys must
+            be valid target names. Targets without port overrides use hash-based
+            port generation.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -160,6 +176,23 @@ class ConnectionConfig(BaseModel):
     strategy: CompetingStrategy | None = None
     serialization: Literal["json", "msgpack"] | None = None
     backpressure: BackpressureConfig | None = None
+    ports: dict[str, int] | None = Field(
+        default=None,
+        description="Per-target port overrides. Keys must be valid target names.",
+    )
+
+    @field_validator("ports", mode="after")
+    @classmethod
+    def validate_port_values(cls, v: dict[str, int] | None) -> dict[str, int] | None:
+        """Validate port values are in valid range."""
+        if v is None:
+            return None
+        for target, port in v.items():
+            if not (1 <= port <= 65535):
+                raise ValueError(
+                    f"Port {port} for target '{target}' must be between 1 and 65535"
+                )
+        return v
 
     @field_validator("distribution", mode="before")
     @classmethod

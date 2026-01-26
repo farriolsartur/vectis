@@ -327,6 +327,56 @@ class TestConnectionConfig:
         )
         assert config.distribution == DistributionMode.FAN_OUT
 
+    def test_ports_default_none(self) -> None:
+        """Test that ports defaults to None."""
+        config = ConnectionConfig(source="provider", targets=["algo"])
+        assert config.ports is None
+
+    def test_ports_valid(self) -> None:
+        """Test that valid port mapping is accepted."""
+        config = ConnectionConfig(
+            source="provider",
+            targets=["algo1", "algo2"],
+            ports={"algo1": 6000, "algo2": 6100},
+        )
+        assert config.ports == {"algo1": 6000, "algo2": 6100}
+
+    def test_ports_invalid_range_low(self) -> None:
+        """Test that port < 1 raises ValidationError."""
+        with pytest.raises(ValidationError, match="must be between 1 and 65535"):
+            ConnectionConfig(
+                source="provider",
+                targets=["algo"],
+                ports={"algo": 0},
+            )
+
+    def test_ports_invalid_range_high(self) -> None:
+        """Test that port > 65535 raises ValidationError."""
+        with pytest.raises(ValidationError, match="must be between 1 and 65535"):
+            ConnectionConfig(
+                source="provider",
+                targets=["algo"],
+                ports={"algo": 65536},
+            )
+
+    def test_ports_partial_coverage(self) -> None:
+        """Test that subset of targets with ports works."""
+        config = ConnectionConfig(
+            source="provider",
+            targets=["algo1", "algo2", "algo3"],
+            ports={"algo1": 6000},  # Only algo1 has fixed port
+        )
+        assert config.ports == {"algo1": 6000}
+
+    def test_ports_empty_dict_accepted(self) -> None:
+        """Test that empty ports dict is accepted (treated as no overrides)."""
+        config = ConnectionConfig(
+            source="provider",
+            targets=["algo"],
+            ports={},
+        )
+        assert config.ports == {}
+
 
 # =============================================================================
 # GlobalConfig Tests
@@ -855,6 +905,94 @@ class TestConfigLoaderValidation:
         errors = loader.validate(config)
         # No conflicting distribution errors (different sources)
         assert not any("conflicting" in e.lower() for e in errors)
+
+    def test_validate_port_key_not_in_targets(self, loader: ConfigLoader) -> None:
+        """Test that port key not in targets list is detected."""
+        config = PipelineConfig(
+            global_config=GlobalConfig(name="test"),
+            connections=[
+                ConnectionConfig(
+                    source="provider_1",
+                    targets=["algo_1", "algo_2"],
+                    ports={"algo_3": 6000},  # algo_3 is not in targets
+                )
+            ],
+            components_by_type={
+                "algorithm": [
+                    ComponentInstanceConfig(name="algo_1", type="test_algo"),
+                    ComponentInstanceConfig(name="algo_2", type="test_algo"),
+                    ComponentInstanceConfig(name="algo_3", type="test_algo"),
+                ],
+                "data_provider": [
+                    ComponentInstanceConfig(name="provider_1", type="test_provider")
+                ],
+            },
+        )
+
+        errors = loader.validate(config)
+        assert len(errors) >= 1
+        assert any(
+            "algo_3" in e and "not in targets" in e for e in errors
+        )
+
+    def test_validate_duplicate_fixed_ports(self, loader: ConfigLoader) -> None:
+        """Test that duplicate fixed ports across connections are detected."""
+        config = PipelineConfig(
+            global_config=GlobalConfig(name="test"),
+            connections=[
+                ConnectionConfig(
+                    source="provider_1",
+                    targets=["algo_1"],
+                    ports={"algo_1": 6000},
+                ),
+                ConnectionConfig(
+                    source="provider_2",
+                    targets=["algo_2"],
+                    ports={"algo_2": 6000},  # Same port as above
+                ),
+            ],
+            components_by_type={
+                "algorithm": [
+                    ComponentInstanceConfig(name="algo_1", type="test_algo"),
+                    ComponentInstanceConfig(name="algo_2", type="test_algo"),
+                ],
+                "data_provider": [
+                    ComponentInstanceConfig(name="provider_1", type="test_provider"),
+                    ComponentInstanceConfig(name="provider_2", type="test_provider"),
+                ],
+            },
+        )
+
+        errors = loader.validate(config)
+        assert len(errors) >= 1
+        assert any("port 6000" in e and "conflicts" in e for e in errors)
+
+    def test_validate_ports_valid_config(self, loader: ConfigLoader) -> None:
+        """Test that valid ports configuration passes validation."""
+        config = PipelineConfig(
+            global_config=GlobalConfig(name="test"),
+            connections=[
+                ConnectionConfig(
+                    source="provider_1",
+                    targets=["algo_1", "algo_2", "algo_3"],
+                    ports={"algo_1": 6000, "algo_2": 6100},  # algo_3 uses hash
+                )
+            ],
+            components_by_type={
+                "algorithm": [
+                    ComponentInstanceConfig(name="algo_1", type="test_algo"),
+                    ComponentInstanceConfig(name="algo_2", type="test_algo"),
+                    ComponentInstanceConfig(name="algo_3", type="test_algo"),
+                ],
+                "data_provider": [
+                    ComponentInstanceConfig(name="provider_1", type="test_provider")
+                ],
+            },
+        )
+
+        errors = loader.validate(config)
+        # Should not have any port-related errors
+        assert not any("port" in e.lower() for e in errors)
 
 
 # =============================================================================

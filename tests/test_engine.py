@@ -1221,3 +1221,287 @@ connections:
         assert len(resolved) == 1
         assert resolved[0].transport_type == TransportType.MULTIPROCESS
         assert resolved[0].endpoint is None
+
+
+# =============================================================================
+# TestTopologyResolverFixedPorts
+# =============================================================================
+
+
+class TestTopologyResolverFixedPorts:
+    """Tests for TopologyResolver fixed port handling."""
+
+    def test_fixed_port_used_when_specified(self, tmp_path, register_test_components):
+        """Test that endpoint uses fixed port when specified."""
+        yaml_content = """
+global:
+  name: fixed-port-test
+
+workers:
+  - name: worker1
+    host: host_a.local
+  - name: worker2
+    host: host_b.local
+
+data_providers:
+  - name: source
+    type: test_counter
+    worker: worker1
+
+algorithms:
+  - name: sink
+    type: test_printer
+    worker: worker2
+
+connections:
+  - source: source
+    targets: [sink]
+    ports:
+      sink: 6000
+"""
+        config_file = tmp_path / "pipeline.yaml"
+        config_file.write_text(yaml_content)
+
+        loader = ConfigLoader()
+        config = loader.load(str(config_file))
+
+        resolver = TopologyResolver()
+        resolved = resolver.resolve(config, worker_name="worker1")
+
+        assert len(resolved) == 1
+        assert resolved[0].transport_type == TransportType.DISTRIBUTED
+        assert resolved[0].endpoint == "tcp://host_b.local:6000"
+
+    def test_hash_port_used_when_not_specified(self, tmp_path, register_test_components):
+        """Test that endpoint uses hash-based port without override."""
+        yaml_content = """
+global:
+  name: hash-port-test
+  transport:
+    type: zeromq
+    config:
+      base_port: 5555
+      port_range: 1000
+
+workers:
+  - name: worker1
+    host: host_a.local
+  - name: worker2
+    host: host_b.local
+
+data_providers:
+  - name: source
+    type: test_counter
+    worker: worker1
+
+algorithms:
+  - name: sink
+    type: test_printer
+    worker: worker2
+
+connections:
+  - source: source
+    targets: [sink]
+    # No ports specified - should use hash
+"""
+        config_file = tmp_path / "pipeline.yaml"
+        config_file.write_text(yaml_content)
+
+        loader = ConfigLoader()
+        config = loader.load(str(config_file))
+
+        resolver = TopologyResolver()
+        resolved = resolver.resolve(config, worker_name="worker1")
+
+        assert len(resolved) == 1
+        assert resolved[0].transport_type == TransportType.DISTRIBUTED
+        assert resolved[0].endpoint is not None
+        # Port should be in range [5555, 6555)
+        port = int(resolved[0].endpoint.split(":")[-1])
+        assert 5555 <= port < 6555
+
+    def test_mixed_fixed_and_hash_ports(self, tmp_path, register_test_components):
+        """Test connection with both fixed and hash-based ports."""
+        yaml_content = """
+global:
+  name: mixed-ports-test
+  transport:
+    type: zeromq
+    config:
+      base_port: 5555
+      port_range: 1000
+
+workers:
+  - name: worker1
+    host: host_a.local
+  - name: worker2
+    host: host_b.local
+
+data_providers:
+  - name: source
+    type: test_counter
+    worker: worker1
+
+algorithms:
+  - name: sink1
+    type: test_printer
+    worker: worker2
+  - name: sink2
+    type: test_printer
+    worker: worker2
+  - name: sink3
+    type: test_printer
+    worker: worker2
+
+connections:
+  - source: source
+    targets: [sink1, sink2, sink3]
+    ports:
+      sink1: 6000
+      # sink2 and sink3 use hash-based ports
+"""
+        config_file = tmp_path / "pipeline.yaml"
+        config_file.write_text(yaml_content)
+
+        loader = ConfigLoader()
+        config = loader.load(str(config_file))
+
+        resolver = TopologyResolver()
+        resolved = resolver.resolve(config, worker_name="worker1")
+
+        assert len(resolved) == 3
+
+        # Find channels by target
+        channels = {ch.target: ch for ch in resolved}
+
+        # sink1 should use fixed port 6000
+        assert channels["sink1"].endpoint == "tcp://host_b.local:6000"
+
+        # sink2 and sink3 should use hash-based ports (in range)
+        sink2_port = int(channels["sink2"].endpoint.split(":")[-1])
+        sink3_port = int(channels["sink3"].endpoint.split(":")[-1])
+        assert 5555 <= sink2_port < 6555
+        assert 5555 <= sink3_port < 6555
+        assert sink2_port != 6000  # Should not collide with fixed port
+        assert sink3_port != 6000
+
+    def test_fixed_port_with_custom_protocol(self, tmp_path, register_test_components):
+        """Test fixed port works with custom protocol."""
+        yaml_content = """
+global:
+  name: custom-protocol-test
+  transport:
+    type: zeromq
+    config:
+      protocol: ipc
+
+workers:
+  - name: worker1
+    host: host_a.local
+  - name: worker2
+    host: host_b.local
+
+data_providers:
+  - name: source
+    type: test_counter
+    worker: worker1
+
+algorithms:
+  - name: sink
+    type: test_printer
+    worker: worker2
+
+connections:
+  - source: source
+    targets: [sink]
+    ports:
+      sink: 6000
+"""
+        config_file = tmp_path / "pipeline.yaml"
+        config_file.write_text(yaml_content)
+
+        loader = ConfigLoader()
+        config = loader.load(str(config_file))
+
+        resolver = TopologyResolver()
+        resolved = resolver.resolve(config, worker_name="worker1")
+
+        assert len(resolved) == 1
+        assert resolved[0].endpoint == "ipc://host_b.local:6000"
+
+    def test_fixed_port_with_template(self, tmp_path, register_test_components):
+        """Test fixed port works with endpoint_template."""
+        yaml_content = """
+global:
+  name: template-test
+  transport:
+    type: zeromq
+    config:
+      endpoint_template: "tcp://{host}:{port}/channel/{source}/{target}"
+
+workers:
+  - name: worker1
+    host: host_a.local
+  - name: worker2
+    host: host_b.local
+
+data_providers:
+  - name: source
+    type: test_counter
+    worker: worker1
+
+algorithms:
+  - name: sink
+    type: test_printer
+    worker: worker2
+
+connections:
+  - source: source
+    targets: [sink]
+    ports:
+      sink: 7000
+"""
+        config_file = tmp_path / "pipeline.yaml"
+        config_file.write_text(yaml_content)
+
+        loader = ConfigLoader()
+        config = loader.load(str(config_file))
+
+        resolver = TopologyResolver()
+        resolved = resolver.resolve(config, worker_name="worker1")
+
+        assert len(resolved) == 1
+        assert resolved[0].endpoint == "tcp://host_b.local:7000/channel/source/sink"
+
+    def test_fixed_port_ignored_for_inprocess(self, tmp_path, register_test_components):
+        """Test that ports field is silently ignored for non-DISTRIBUTED transport."""
+        yaml_content = """
+global:
+  name: inprocess-ports-test
+
+data_providers:
+  - name: source
+    type: test_counter
+
+algorithms:
+  - name: sink
+    type: test_printer
+
+connections:
+  - source: source
+    targets: [sink]
+    ports:
+      sink: 6000  # Should be ignored (no workers = INPROCESS)
+"""
+        config_file = tmp_path / "pipeline.yaml"
+        config_file.write_text(yaml_content)
+
+        loader = ConfigLoader()
+        config = loader.load(str(config_file))
+
+        resolver = TopologyResolver()
+        resolved = resolver.resolve(config)
+
+        assert len(resolved) == 1
+        assert resolved[0].transport_type == TransportType.INPROCESS
+        assert resolved[0].endpoint is None  # No endpoint for INPROCESS
