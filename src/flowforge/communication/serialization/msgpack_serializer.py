@@ -38,6 +38,7 @@ class MessagePackSerializer(Serializer):
             ImportError: If msgpack package is not installed.
         """
         try:
+            # Lazy import to prevent crashes
             import msgpack
 
             self._msgpack = msgpack

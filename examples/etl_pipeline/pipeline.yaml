@@ -1,0 +1,36 @@
+# ETL Pipeline Configuration
+# Demonstrates: Source -> Transform -> Load chain with processing
+
+global:
+  name: etl-pipeline
+  version: "1.0"
+  defaults:
+    distribution: fan_out
+    serialization: json
+
+data_providers:
+  - name: source
+    type: etl_data_source
+    config:
+      record_count: 20
+      include_invalid: true  # Include some bad records to test filtering
+
+algorithms:
+  - name: transformer
+    type: etl_transformer
+    config:
+      uppercase_names: true
+      filter_threshold: 20  # Only pass records with value >= 20
+      add_timestamp: true
+
+  - name: loader
+    type: etl_loader
+
+connections:
+  # Source -> Transformer
+  - source: source
+    targets: [transformer]
+
+  # Transformer -> Loader
+  - source: transformer
+    targets: [loader]

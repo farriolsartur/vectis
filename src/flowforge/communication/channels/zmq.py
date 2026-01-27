@@ -47,6 +47,7 @@ class _ZmqBaseChannel:
         self._name = name or f"zmq-{id(self)}"
 
         try:
+            # Lazy import to prevent crashes
             import zmq as zmq_module
 
             self._zmq = zmq_module

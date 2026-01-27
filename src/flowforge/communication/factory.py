@@ -277,6 +277,7 @@ class ChannelFactory:
         """Get or create a shared ZMQ context."""
         if self._zmq_context is None:
             try:
+                # Lazy import to prevent crashes
                 import zmq.asyncio
 
                 self._zmq_context = zmq.asyncio.Context.instance()

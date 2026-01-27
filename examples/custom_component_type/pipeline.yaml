@@ -1,0 +1,33 @@
+# Custom Component Type Pipeline
+# Demonstrates: new component type (processor) in YAML
+
+global:
+  name: custom-component-type
+  version: "1.0"
+  defaults:
+    distribution: fan_out
+    serialization: json
+
+data_providers:
+  - name: counter
+    type: custom_counter
+    config:
+      count: 5
+      start: 1
+
+processors:
+  - name: multiplier
+    type: value_multiplier
+    config:
+      factor: 3
+
+algorithms:
+  - name: printer
+    type: custom_printer
+
+connections:
+  - source: counter
+    targets: [multiplier]
+
+  - source: multiplier
+    targets: [printer]

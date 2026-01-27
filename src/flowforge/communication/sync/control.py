@@ -129,6 +129,7 @@ class ZmqControlChannel(ControlChannel):
         self._ready: set[str] = set()
 
         try:
+            # Lazy import to prevent crashes
             import zmq as zmq_module
             import zmq.asyncio as zmq_asyncio
 

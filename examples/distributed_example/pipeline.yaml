@@ -1,0 +1,60 @@
+# Distributed Pipeline Configuration
+# Demonstrates: Multi-worker deployment with competing distribution
+
+global:
+  name: distributed-pipeline
+  version: "1.0"
+  defaults:
+    serialization: json
+    distribution: competing  # Load balance across consumers
+    strategy: round_robin
+  transport:
+    type: zmq
+    config:
+      protocol: tcp
+      base_port: 5555
+      port_range: 100
+
+# Worker definitions for distributed deployment
+# In production, each worker runs on a separate process/host
+workers:
+  - name: producer
+    host: localhost
+
+  - name: consumer1
+    host: localhost
+
+  - name: consumer2
+    host: localhost
+
+data_providers:
+  - name: producer
+    type: distributed_producer
+    worker: producer
+    config:
+      batch_count: 5
+      batch_size: 10
+      delay_ms: 50
+
+algorithms:
+  - name: consumer1
+    type: distributed_consumer
+    worker: consumer1
+    config:
+      processing_delay_ms: 20
+      verbose: false
+
+  - name: consumer2
+    type: distributed_consumer
+    worker: consumer2
+    config:
+      processing_delay_ms: 20
+      verbose: false
+
+connections:
+  # Producer sends to both consumers with competing distribution
+  # Each item goes to exactly one consumer (load balanced)
+  - source: producer
+    targets: [consumer1, consumer2]
+    distribution: competing
+    strategy: round_robin
