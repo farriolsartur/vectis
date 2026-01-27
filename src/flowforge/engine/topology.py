@@ -156,10 +156,12 @@ class TopologyResolver:
 
                 endpoint = None
                 if transport_type == TransportType.DISTRIBUTED:
-                    target_worker = component_workers.get(target)
-                    if target_worker is None:
-                        target_worker = worker_name
-                    target_host = worker_hosts.get(target_worker, "localhost")
+                    target_worker = component_workers.get(target) or worker_name
+                    target_host = (
+                        worker_hosts.get(target_worker, "localhost")
+                        if target_worker
+                        else "localhost"
+                    )
 
                     # Get fixed port if specified
                     fixed_port = None
