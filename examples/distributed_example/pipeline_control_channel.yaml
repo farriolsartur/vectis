@@ -1,0 +1,84 @@
+# Distributed Pipeline Configuration - Control Channel Strategy
+# =============================================================
+#
+# Startup Synchronization: CONTROL_CHANNEL
+#
+# How it works:
+#   1. Each worker connects to a shared control channel
+#   2. Consumers broadcast "ready" when they start listening
+#   3. Producer waits for all consumers to be ready before sending
+#   4. Coordination ensures no messages are lost
+#
+# Pros:
+#   - No race conditions - producer waits for consumers
+#   - Workers can start in any order
+#   - Messages are never sent to unconnected consumers
+#
+# Cons:
+#   - Requires control channel infrastructure
+#   - Adds startup latency (waiting for coordination)
+#   - Timeout if dependencies never become ready (default: 30s)
+#
+# Usage:
+#   # Workers can start in ANY order
+#   Terminal 1: python -m examples.distributed_example.run --sync control --worker producer
+#   Terminal 2: python -m examples.distributed_example.run --sync control --worker consumer1
+#   Terminal 3: python -m examples.distributed_example.run --sync control --worker consumer2
+
+global:
+  name: distributed-pipeline-coordinated
+  version: "1.0"
+  sync_strategy: control_channel  # Explicit coordination
+  defaults:
+    serialization: json
+    distribution: competing
+    strategy: round_robin
+  transport:
+    type: zmq
+    config:
+      protocol: tcp
+      base_port: 5555
+      port_range: 100
+      # Control channel settings
+      startup_timeout: 60        # Wait up to 60s for dependencies
+      control_base_port: 5600    # Port range for control channel
+
+workers:
+  - name: producer
+    host: localhost
+
+  - name: consumer1
+    host: localhost
+
+  - name: consumer2
+    host: localhost
+
+data_providers:
+  - name: producer
+    type: distributed_producer
+    worker: producer
+    config:
+      batch_count: 5
+      batch_size: 10
+      delay_ms: 50
+
+algorithms:
+  - name: consumer1
+    type: distributed_consumer
+    worker: consumer1
+    config:
+      processing_delay_ms: 20
+      verbose: false
+
+  - name: consumer2
+    type: distributed_consumer
+    worker: consumer2
+    config:
+      processing_delay_ms: 20
+      verbose: false
+
+connections:
+  - source: producer
+    targets: [consumer1, consumer2]
+    distribution: competing
+    strategy: round_robin

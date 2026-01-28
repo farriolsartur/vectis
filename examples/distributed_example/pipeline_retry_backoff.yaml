@@ -1,0 +1,79 @@
+# Distributed Pipeline Configuration - Retry Backoff Strategy
+# ============================================================
+#
+# Startup Synchronization: RETRY_BACKOFF (default)
+#
+# How it works:
+#   - Channels use exponential backoff when connection fails
+#   - No explicit coordination between workers
+#   - Producer starts sending immediately after binding
+#
+# Pros:
+#   - Simple, no additional infrastructure
+#   - Works for persistent message queues
+#
+# Cons:
+#   - Race condition: producer may finish before consumers connect
+#   - Messages sent to unconnected consumers are LOST
+#   - Requires manual startup order (consumers first, producer last)
+#
+# Usage:
+#   # Start consumers FIRST, then producer
+#   Terminal 1: python -m examples.distributed_example.run --sync retry --worker consumer1
+#   Terminal 2: python -m examples.distributed_example.run --sync retry --worker consumer2
+#   Terminal 3: python -m examples.distributed_example.run --sync retry --worker producer
+
+global:
+  name: distributed-pipeline-retry
+  version: "1.0"
+  sync_strategy: retry_backoff  # Explicit (this is also the default)
+  defaults:
+    serialization: json
+    distribution: competing
+    strategy: round_robin
+  transport:
+    type: zmq
+    config:
+      protocol: tcp
+      base_port: 5555
+      port_range: 100
+
+workers:
+  - name: producer
+    host: localhost
+
+  - name: consumer1
+    host: localhost
+
+  - name: consumer2
+    host: localhost
+
+data_providers:
+  - name: producer
+    type: distributed_producer
+    worker: producer
+    config:
+      batch_count: 5
+      batch_size: 10
+      delay_ms: 100  # Slightly longer delay to give consumers time
+
+algorithms:
+  - name: consumer1
+    type: distributed_consumer
+    worker: consumer1
+    config:
+      processing_delay_ms: 20
+      verbose: false
+
+  - name: consumer2
+    type: distributed_consumer
+    worker: consumer2
+    config:
+      processing_delay_ms: 20
+      verbose: false
+
+connections:
+  - source: producer
+    targets: [consumer1, consumer2]
+    distribution: competing
+    strategy: round_robin

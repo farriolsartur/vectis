@@ -88,7 +88,9 @@ class MultiprocessControlChannel(ControlChannel):
 
         start = time.monotonic()
         while True:
-            ready = await asyncio.to_thread(self._manager.check_ready, dependencies)
+            result = await asyncio.to_thread(self._manager.check_ready, dependencies)
+            # BaseManager returns AutoProxy objects; extract the actual value
+            ready = result._getvalue() if hasattr(result, "_getvalue") else result
             if ready:
                 return True
             if timeout is not None and (time.monotonic() - start) >= timeout:

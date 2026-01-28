@@ -13,8 +13,10 @@ This example shows:
 ## Files
 
 - `components.py` - Producer and Consumer components
-- `pipeline.yaml` - Distributed pipeline configuration
-- `run.py` - Entry point with CLI for worker selection
+- `pipeline.yaml` - Default pipeline configuration (retry_backoff)
+- `pipeline_retry_backoff.yaml` - Explicit retry backoff sync strategy
+- `pipeline_control_channel.yaml` - Coordinated startup sync strategy
+- `run.py` - Entry point with CLI for worker and sync strategy selection
 
 ## Running
 
@@ -31,18 +33,38 @@ ignoring worker assignments.
 
 ### Distributed Mode (Production)
 
-Run each worker in a separate terminal:
+FlowForge supports two startup synchronization strategies:
+
+#### Strategy 1: Retry Backoff (Default)
+
+Channels use exponential backoff on connection failure. **Start consumers first!**
 
 ```bash
-# Terminal 1: Start the producer
-python -m examples.distributed_example.run --worker producer
+# Terminal 1: Start first consumer
+python -m examples.distributed_example.run --sync retry --worker consumer1
 
-# Terminal 2: Start first consumer
-python -m examples.distributed_example.run --worker consumer1
+# Terminal 2: Start second consumer
+python -m examples.distributed_example.run --sync retry --worker consumer2
 
-# Terminal 3: Start second consumer
-python -m examples.distributed_example.run --worker consumer2
+# Terminal 3: Start producer LAST
+python -m examples.distributed_example.run --sync retry --worker producer
 ```
+
+⚠️ **Order matters!** If producer starts before consumers, messages may be lost.
+
+#### Strategy 2: Control Channel (Coordinated)
+
+Workers coordinate via a control channel. Producer waits for consumers to be ready.
+**Workers can start in any order.**
+
+```bash
+# Any order works:
+python -m examples.distributed_example.run --sync control --worker producer
+python -m examples.distributed_example.run --sync control --worker consumer1
+python -m examples.distributed_example.run --sync control --worker consumer2
+```
+
+The producer blocks until all consumers broadcast "ready" status.
 
 ## Pipeline Architecture
 
@@ -62,6 +84,25 @@ Transport: ZMQ (tcp://localhost:5555+)
 ```
 
 ## Key Concepts
+
+### Startup Synchronization Strategies
+
+When workers start in separate processes, they need to coordinate:
+
+| Strategy | Config Value | How It Works | When to Use |
+|----------|-------------|--------------|-------------|
+| **Retry Backoff** | `retry_backoff` | Exponential backoff on connection failure | Simple setups, persistent queues |
+| **Control Channel** | `control_channel` | Explicit ready/wait coordination | Production, any startup order |
+
+Configure in YAML:
+
+```yaml
+global:
+  sync_strategy: control_channel  # or retry_backoff (default)
+  transport:
+    config:
+      startup_timeout: 60  # Seconds to wait for dependencies
+```
 
 ### Worker Configuration
 

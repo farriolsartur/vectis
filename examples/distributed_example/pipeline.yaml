@@ -1,9 +1,17 @@
-# Distributed Pipeline Configuration
+# Distributed Pipeline Configuration (Default)
 # Demonstrates: Multi-worker deployment with competing distribution
+#
+# This uses the default sync_strategy (retry_backoff).
+# See also:
+#   - pipeline_retry_backoff.yaml   - Explicit retry backoff config
+#   - pipeline_control_channel.yaml - Coordinated startup config
+#
+# For distributed mode, start consumers first, then producer.
 
 global:
   name: distributed-pipeline
   version: "1.0"
+  sync_strategy: retry_backoff  # Default: retry on connection failure
   defaults:
     serialization: json
     distribution: competing  # Load balance across consumers

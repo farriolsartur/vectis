@@ -14,6 +14,7 @@ Key patterns demonstrated:
 
 from __future__ import annotations
 
+import asyncio
 from abc import ABC
 from typing import Any
 
@@ -69,7 +70,9 @@ class CounterProvider(DataProvider[CounterConfig]):
                 break
             value = self.config.start + i
             self.sent_values.append(value)
+            print(f"[{self.name}] Sending value: {value}")
             await self.send_data({"value": value})
+            await asyncio.sleep(0.3)  # Small delay to visualize flow
 
         await self.send_end_of_stream()
 
@@ -99,7 +102,9 @@ class MultiplierProcessor(Processor[MultiplyConfig]):
 
         result = value * self.config.factor
         self.processed_values.append(result)
+        print(f"[{self.name}] {value} * {self.config.factor} = {result}")
         await self.send_data({"value": result})
+        await asyncio.sleep(0.1)  # Simulate processing time
 
     async def on_received_ending(self, message: Message[Any]) -> None:
         await self.send_end_of_stream()
@@ -118,6 +123,7 @@ class PrinterAlgorithm(Algorithm[EmptyConfig]):
         self.received_values.append(message.payload)
         self.received_count += 1
         print(f"[{self.name}] Received #{self.received_count}: {message.payload}")
+        await asyncio.sleep(0.1)  # Simulate processing time
 
     async def on_start(self) -> None:
         print(f"[{self.name}] Starting...")

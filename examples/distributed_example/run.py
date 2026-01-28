@@ -1,25 +1,43 @@
 #!/usr/bin/env python3
 """Run the distributed pipeline example.
 
-This example demonstrates distributed pipeline execution. It can be run in
-two modes:
+This example demonstrates distributed pipeline execution with two startup
+synchronization strategies:
 
-1. Local mode (force_inprocess=True): All components run in a single process.
+EXECUTION MODES:
+
+1. Local mode (default): All components run in a single process.
    Useful for development and debugging.
 
-2. Distributed mode: Each worker runs in a separate process (production).
+2. Distributed mode: Each worker runs in a separate process.
    Requires running the script multiple times with different --worker flags.
+
+SYNC STRATEGIES:
+
+1. retry_backoff (--sync retry): Default strategy
+   - Channels retry with exponential backoff on connection failure
+   - No explicit coordination - producer starts immediately
+   - CAVEAT: Start consumers FIRST, then producer (order matters!)
+
+2. control_channel (--sync control): Coordinated startup
+   - Workers broadcast "ready" status via control channel
+   - Producer waits for all consumers before sending
+   - Workers can start in ANY order
 
 Usage:
     # Local mode (default) - for development/testing
     python -m examples.distributed_example.run
-    # or from project root:
-    python examples/distributed_example/run.py
+    python -m examples.distributed_example.run --sync control
 
-    # Distributed mode - run each worker in a separate terminal
-    python -m examples.distributed_example.run --worker producer
-    python -m examples.distributed_example.run --worker consumer1
-    python -m examples.distributed_example.run --worker consumer2
+    # Distributed mode with RETRY strategy (start consumers first!)
+    Terminal 1: python -m examples.distributed_example.run --sync retry --worker consumer1
+    Terminal 2: python -m examples.distributed_example.run --sync retry --worker consumer2
+    Terminal 3: python -m examples.distributed_example.run --sync retry --worker producer
+
+    # Distributed mode with CONTROL CHANNEL (any order)
+    Terminal 1: python -m examples.distributed_example.run --sync control --worker producer
+    Terminal 2: python -m examples.distributed_example.run --sync control --worker consumer1
+    Terminal 3: python -m examples.distributed_example.run --sync control --worker consumer2
 """
 
 from __future__ import annotations
@@ -57,7 +75,15 @@ def setup_logging(verbose: bool = False) -> None:
 def parse_args() -> argparse.Namespace:
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(
-        description="Run the distributed pipeline example"
+        description="Run the distributed pipeline example",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Sync Strategy Details:
+  retry   - Exponential backoff on connection failure (default)
+            Start consumers FIRST, then producer
+  control - Coordinated startup via control channel
+            Workers can start in any order
+        """,
     )
     parser.add_argument(
         "--worker",
@@ -65,6 +91,14 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Worker name to run (producer, consumer1, consumer2). "
              "If not specified, runs all components locally (force_inprocess).",
+    )
+    parser.add_argument(
+        "--sync",
+        type=str,
+        choices=["retry", "control"],
+        default="retry",
+        help="Startup sync strategy: 'retry' (retry_backoff) or 'control' (control_channel). "
+             "Default: retry",
     )
     parser.add_argument(
         "--verbose", "-v",
@@ -79,8 +113,16 @@ async def main() -> None:
     args = parse_args()
     setup_logging(args.verbose)
 
-    # Get the path to the pipeline configuration
-    config_path = Path(__file__).parent / "pipeline.yaml"
+    # Select configuration based on sync strategy
+    config_dir = Path(__file__).parent
+    if args.sync == "control":
+        config_path = config_dir / "pipeline_control_channel.yaml"
+        sync_label = "CONTROL_CHANNEL"
+        sync_desc = "Coordinated startup (workers can start in any order)"
+    else:
+        config_path = config_dir / "pipeline_retry_backoff.yaml"
+        sync_label = "RETRY_BACKOFF"
+        sync_desc = "Exponential backoff (start consumers first!)"
 
     # Determine execution mode
     force_inprocess = args.worker is None
@@ -88,7 +130,9 @@ async def main() -> None:
     print("=" * 60)
     print("FlowForge Distributed Pipeline Example")
     print("=" * 60)
-    print(f"Config: {config_path}")
+    print(f"Config: {config_path.name}")
+    print(f"Sync Strategy: {sync_label}")
+    print(f"  {sync_desc}")
     print()
 
     if force_inprocess:
@@ -103,10 +147,13 @@ async def main() -> None:
     else:
         print(f"Mode: DISTRIBUTED (running worker: {args.worker})")
         print()
-        print("Make sure to start all workers:")
-        print("  python -m examples.distributed_example.run --worker producer")
-        print("  python -m examples.distributed_example.run --worker consumer1")
-        print("  python -m examples.distributed_example.run --worker consumer2")
+        if args.sync == "control":
+            print("Control channel enabled - workers can start in any order:")
+        else:
+            print("WARNING: Start consumers FIRST, then producer:")
+        print(f"  python -m examples.distributed_example.run --sync {args.sync} --worker consumer1")
+        print(f"  python -m examples.distributed_example.run --sync {args.sync} --worker consumer2")
+        print(f"  python -m examples.distributed_example.run --sync {args.sync} --worker producer")
         print()
         engine = Engine(str(config_path), worker_name=args.worker)
 
