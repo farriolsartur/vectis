@@ -565,6 +565,20 @@ class Engine:
                     )
 
             logger.info("All triggerables completed")
+        else:
+            if self._receiver_tasks:
+                results = await asyncio.gather(
+                    *self._receiver_tasks, return_exceptions=True
+                )
+                for result in results:
+                    if isinstance(result, Exception) and not isinstance(
+                        result, asyncio.CancelledError
+                    ):
+                        logger.error(
+                            "Receiver task failed: %s", result, exc_info=result
+                        )
+                logger.info("All receivers completed")
+            return
 
         # Wait briefly for final messages to propagate
         await asyncio.sleep(0.1)
@@ -578,6 +592,15 @@ class Engine:
                     pending_receivers,
                     timeout=5.0,
                 )
+                for task in done:
+                    try:
+                        exc = task.exception()
+                    except asyncio.CancelledError:
+                        continue
+                    if exc is not None:
+                        logger.error(
+                            "Receiver task failed: %s", exc, exc_info=exc
+                        )
 
                 if pending:
                     logger.debug(
@@ -585,6 +608,16 @@ class Engine:
                         "(waiting for EOS)",
                         len(pending),
                     )
+            else:
+                for task in self._receiver_tasks:
+                    try:
+                        exc = task.exception()
+                    except asyncio.CancelledError:
+                        continue
+                    if exc is not None:
+                        logger.error(
+                            "Receiver task failed: %s", exc, exc_info=exc
+                        )
 
     async def shutdown(self, timeout: float = 30.0) -> None:
         """Gracefully shutdown the pipeline.

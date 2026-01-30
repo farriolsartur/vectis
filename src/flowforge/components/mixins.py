@@ -7,10 +7,12 @@ Mixins are designed to be combined with the Component base class.
 from __future__ import annotations
 
 import logging
+import asyncio
 from abc import abstractmethod
 from typing import TYPE_CHECKING, Any
 
 from flowforge.messages import Message, MessageType
+from flowforge.exceptions import ChannelClosedError
 
 if TYPE_CHECKING:
     from flowforge.communication import ChannelGroup, InputChannel
@@ -164,7 +166,16 @@ class ReceiverMixin:
         self._is_listening = True
         try:
             while self._is_listening:
-                message = await self._input_channel.receive()
+                try:
+                    message = await self._input_channel.receive()
+                except ChannelClosedError:
+                    logger.debug(
+                        "Component '%s' input channel closed, stopping listener",
+                        self._get_component_name(),
+                    )
+                    break
+                except asyncio.CancelledError:
+                    break
                 await self._dispatch_message(message)
 
                 # Exit loop on END_OF_STREAM

@@ -161,7 +161,10 @@ class MultiprocessInputChannel:
         if self._closed:
             raise ChannelClosedError(self._name)
 
-        data = await self._queue.get()
+        try:
+            data = await self._queue.get()
+        except (ConnectionResetError, EOFError, BrokenPipeError) as exc:
+            raise ChannelClosedError(self._name) from exc
         message = self._serializer.deserialize(data)
         logger.debug(
             "Channel '%s' received %s message from '%s'",
