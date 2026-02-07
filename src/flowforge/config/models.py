@@ -141,6 +141,7 @@ class ComponentInstanceConfig(BaseModel):
         type: Registered component implementation name (from ComponentRegistry).
         worker: Optional worker assignment for distributed execution.
         config: Component-specific configuration passed to factory.
+        join: Optional join configuration for Joiner components.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -149,6 +150,10 @@ class ComponentInstanceConfig(BaseModel):
     type: str = Field(min_length=1)
     worker: str | None = None
     config: dict[str, Any] = Field(default_factory=dict)
+    join: dict[str, Any] | None = Field(
+        default=None,
+        description="Join configuration for Joiner components",
+    )
 
 
 class ConnectionConfig(BaseModel):

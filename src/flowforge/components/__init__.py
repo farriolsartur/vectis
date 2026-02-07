@@ -1,17 +1,26 @@
 """FlowForge component system.
 
 This module provides the component infrastructure for building pipelines:
-- Base classes: Component, DataProvider, Algorithm
-- Mixins: SenderMixin, ReceiverMixin, ProcessorMixin
+- Base classes: Component, DataProvider, Algorithm, Joiner
+- Mixins: SenderMixin, ReceiverMixin, ProcessorMixin, JoinerMixin
 - Protocols: Triggerable
 - Registry: ComponentTypeRegistry, ComponentRegistry
 - Factory: ComponentFactory
-- Decorators: @algorithm, @data_provider
+- Decorators: @algorithm, @data_provider, @joiner
 """
 
 from flowforge.components.base import Component, ConfigT, EmptyConfig
-from flowforge.components.decorators import algorithm, data_provider
+from flowforge.components.decorators import algorithm, data_provider, joiner
 from flowforge.components.factory import ComponentFactory
+from flowforge.components.joining import (
+    EOSAction,
+    EvictionPolicy,
+    JoinBuffer,
+    JoinConfig,
+    JoinMode,
+    Joiner,
+    JoinerMixin,
+)
 from flowforge.components.mixins import ProcessorMixin, ReceiverMixin, SenderMixin
 from flowforge.components.protocols import Triggerable
 from flowforge.components.registry import (
@@ -32,10 +41,18 @@ __all__ = [
     # Built-in types
     "DataProvider",
     "Algorithm",
+    "Joiner",
     # Mixins
     "SenderMixin",
     "ReceiverMixin",
     "ProcessorMixin",
+    "JoinerMixin",
+    # Joining configuration
+    "JoinConfig",
+    "JoinMode",
+    "EvictionPolicy",
+    "EOSAction",
+    "JoinBuffer",
     # Registry
     "ComponentTypeRegistry",
     "ComponentRegistry",
@@ -46,4 +63,5 @@ __all__ = [
     # Decorators
     "algorithm",
     "data_provider",
+    "joiner",
 ]

@@ -1,0 +1,96 @@
+# Order Enrichment Pipeline
+#
+# This pipeline demonstrates stream joins in FlowForge:
+# - 3 data providers generate order, customer, and inventory data
+# - A joiner correlates them by order_id
+# - A processor handles the enriched orders
+#
+# Each data source simulates an API that returns data tagged with order_id.
+# The joiner waits until all three sources have data for a given order_id,
+# then emits an enriched record combining all the information.
+
+global:
+  name: order-enrichment-pipeline
+  version: "1.0"
+  defaults:
+    distribution: fan_out
+    serialization: json
+    backpressure:
+      mode: block
+      queue_size: 1000
+
+# Three data sources, each providing different aspects of order data
+data_providers:
+  - name: order_source
+    type: order_api_provider
+    config:
+      count: 10
+      delay: 0.05
+
+  - name: customer_source
+    type: customer_api_provider
+    config:
+      count: 10
+      delay: 0.03
+
+  - name: inventory_source
+    type: inventory_api_provider
+    config:
+      count: 10
+      delay: 0.04
+
+# Joiner that correlates all three sources
+joiners:
+  - name: order_enricher
+    type: order_enricher
+    config:
+      include_timestamps: true
+    join:
+      # Extract order_id from each message payload
+      correlation_key_path: order_id
+
+      # Inner join: require all sources
+      mode: inner
+
+      # Declare the sources we expect to receive from
+      sources:
+        - order_source
+        - customer_source
+        - inventory_source
+
+      # Time window to wait for matching messages
+      window_seconds: 30.0
+
+      # Memory limits
+      max_pending_keys: 10000
+      max_messages_per_key: 100
+
+      # TTL for correlation keys
+      key_ttl_seconds: 60.0
+
+      # On buffer overflow, evict oldest keys
+      eviction_policy: drop_oldest
+
+      # On end-of-stream, emit partial joins
+      eos_action: emit_partial
+
+# Processor for enriched orders
+algorithms:
+  - name: enriched_processor
+    type: order_processor
+
+# Wire everything together
+connections:
+  # All three sources feed into the joiner
+  - source: order_source
+    targets: [order_enricher]
+
+  - source: customer_source
+    targets: [order_enricher]
+
+  - source: inventory_source
+    targets: [order_enricher]
+
+  # Enriched orders go to the processor
+  - source: order_enricher
+    targets: [enriched_processor]

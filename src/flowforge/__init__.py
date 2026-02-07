@@ -67,6 +67,13 @@ from flowforge.components import (
     ConfigT,
     DataProvider,
     EmptyConfig,
+    EOSAction,
+    EvictionPolicy,
+    JoinBuffer,
+    JoinConfig,
+    JoinMode,
+    Joiner,
+    JoinerMixin,
     ProcessorMixin,
     ReceiverMixin,
     SenderMixin,
@@ -75,6 +82,7 @@ from flowforge.components import (
     data_provider,
     get_component_registry,
     get_component_type_registry,
+    joiner,
 )
 from flowforge.exceptions import (
     BackpressureDroppedError,
@@ -125,10 +133,18 @@ __all__ = [
     "EmptyConfig",
     "DataProvider",
     "Algorithm",
+    "Joiner",
     # Component mixins
     "SenderMixin",
     "ReceiverMixin",
     "ProcessorMixin",
+    "JoinerMixin",
+    # Joining configuration
+    "JoinConfig",
+    "JoinMode",
+    "EvictionPolicy",
+    "EOSAction",
+    "JoinBuffer",
     # Component registry
     "ComponentTypeRegistry",
     "ComponentRegistry",
@@ -139,6 +155,7 @@ __all__ = [
     # Component decorators
     "algorithm",
     "data_provider",
+    "joiner",
     # Config (Phase 4)
     "ConfigLoader",
     "BackpressureConfig",

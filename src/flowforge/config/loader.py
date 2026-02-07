@@ -423,6 +423,7 @@ class ConfigLoader:
         This validates that:
         1. Component type sections correspond to registered component types
         2. Component instance 'type' fields reference registered components
+        3. Joiner components have valid join configuration
 
         Args:
             config: The pipeline configuration.
@@ -452,6 +453,67 @@ class ConfigLoader:
                     errors.append(
                         f"Component '{instance.name}' references unknown type "
                         f"'{instance.type}'. Check component registration."
+                    )
+
+        # Validate joiner configurations
+        errors.extend(self._validate_joiners(config))
+
+        return errors
+
+    def _validate_joiners(self, config: PipelineConfig) -> list[str]:
+        """Validate joiner configurations.
+
+        Args:
+            config: The pipeline configuration.
+
+        Returns:
+            List of validation errors.
+        """
+        errors: list[str] = []
+
+        # Build map of target -> sources from connections
+        target_sources: dict[str, set[str]] = {}
+        for conn in config.connections:
+            for target in conn.targets:
+                target_sources.setdefault(target, set()).add(conn.source)
+
+        # Validate joiner-type components
+        joiner_instances = config.components_by_type.get("joiner", [])
+        for instance in joiner_instances:
+            if instance.join is None:
+                errors.append(
+                    f"Joiner '{instance.name}' is missing required 'join' configuration"
+                )
+                continue
+
+            # Validate join config structure
+            try:
+                from flowforge.components.joining.config import JoinConfig
+
+                join_config = JoinConfig.model_validate(instance.join)
+            except Exception as e:
+                errors.append(
+                    f"Invalid join configuration for '{instance.name}': {e}"
+                )
+                continue
+
+            # Validate that declared sources match actual connections
+            expected_sources = set(join_config.sources)
+            actual_sources = target_sources.get(instance.name, set())
+
+            if expected_sources != actual_sources:
+                missing = expected_sources - actual_sources
+                extra = actual_sources - expected_sources
+
+                if missing:
+                    errors.append(
+                        f"Joiner '{instance.name}': missing connections from "
+                        f"declared sources: {sorted(missing)}"
+                    )
+                if extra:
+                    errors.append(
+                        f"Joiner '{instance.name}': has connections from "
+                        f"undeclared sources: {sorted(extra)}"
                     )
 
         return errors

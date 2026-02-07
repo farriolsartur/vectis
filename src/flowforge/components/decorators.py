@@ -67,3 +67,30 @@ def data_provider(name: str) -> Callable[[T], T]:
     """
     registry = get_component_type_registry()
     return registry.create_decorator("data_provider")(name)
+
+
+def joiner(name: str) -> Callable[[T], T]:
+    """Decorator for registering a class as a joiner component.
+
+    The decorated class must be a subclass of Joiner.
+
+    Args:
+        name: Unique name for this joiner in the registry.
+
+    Returns:
+        A decorator that registers the class as a joiner.
+
+    Raises:
+        TypeError: If the decorated class is not a subclass of Joiner.
+        ValueError: If a joiner with this name is already registered.
+
+    Example:
+        >>> @joiner("order_enricher")
+        ... class OrderEnricher(Joiner[EnricherConfig]):
+        ...     async def on_joined(self, key, messages):
+        ...         order = messages["orders"][0].payload
+        ...         customer = messages["customers"][0].payload
+        ...         await self.send_data({**order, "customer": customer})
+    """
+    registry = get_component_type_registry()
+    return registry.create_decorator("joiner")(name)

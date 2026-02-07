@@ -20,13 +20,14 @@ dependencies = [
 [project.optional-dependencies]
 msgpack = ["msgpack>=1.0"]
 distributed = ["pyzmq>=25.0"]
+joins = ["jsonpath-ng>=1.5"]
 dev = [
     "pytest>=7.0",
     "pytest-asyncio>=0.21",
     "pytest-cov>=4.0",
 ]
 all = [
-    "flowforge[msgpack,distributed,dev]",
+    "flowforge[msgpack,distributed,joins,dev]",
 ]
 
 [tool.hatch.build.targets.wheel]

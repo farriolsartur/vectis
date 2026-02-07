@@ -19,6 +19,9 @@ from flowforge.components.registry import (
 )
 from flowforge.messages import Message
 
+# Import Joiner for registration (avoid circular import by importing at module level)
+# The actual Joiner class is imported lazily in _register_builtin_types
+
 
 class DataProvider(Component[ConfigT], SenderMixin, ABC):
     """Base class for components that produce data.
@@ -125,7 +128,7 @@ class Algorithm(Component[ConfigT], ReceiverMixin, ABC):
 
 # Register built-in types with the ComponentTypeRegistry
 def _register_builtin_types() -> None:
-    """Register DataProvider and Algorithm as built-in component types."""
+    """Register DataProvider, Algorithm, and Joiner as built-in component types."""
     registry = get_component_type_registry()
 
     # Only register if not already registered (avoids double-registration on reload)
@@ -133,6 +136,12 @@ def _register_builtin_types() -> None:
         registry.register_type("data_provider", DataProvider)
     if "algorithm" not in registry.types:
         registry.register_type("algorithm", Algorithm)
+
+    # Register Joiner type (lazy import to avoid circular dependency)
+    if "joiner" not in registry.types:
+        from flowforge.components.joining.joiner import Joiner
+
+        registry.register_type("joiner", Joiner)
 
 
 # Auto-register on module import

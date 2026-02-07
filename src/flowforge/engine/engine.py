@@ -12,7 +12,12 @@ import logging
 from typing import TYPE_CHECKING, Any
 
 from flowforge.communication.channels.multiplex import MultiplexInputChannel
-from flowforge.communication.enums import StartupSyncStrategy, TransportType
+from flowforge.communication.enums import (
+    CompetingStrategy,
+    DistributionMode,
+    StartupSyncStrategy,
+    TransportType,
+)
 from flowforge.communication.factory import ChannelFactory
 from flowforge.communication.sync.control import (
     MultiprocessControlChannel,
@@ -330,10 +335,18 @@ class Engine:
         factory = ComponentFactory()
 
         for instance_config in self._context.get_components():
+            # Parse join config if present
+            join_config = None
+            if instance_config.join is not None:
+                from flowforge.components.joining.config import JoinConfig
+
+                join_config = JoinConfig.model_validate(instance_config.join)
+
             component = factory.create_component(
                 component_name=instance_config.type,
                 instance_name=instance_config.name,
                 config_dict=instance_config.config,
+                join_config=join_config,
             )
             self._components[instance_config.name] = component
 

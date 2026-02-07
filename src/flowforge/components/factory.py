@@ -6,7 +6,7 @@ instances from registry entries and configuration dictionaries.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from pydantic import ValidationError
 
@@ -16,6 +16,9 @@ from flowforge.components.registry import (
     get_component_registry,
 )
 from flowforge.exceptions import ComponentNotFoundError, PipelineConfigError
+
+if TYPE_CHECKING:
+    from flowforge.components.joining.config import JoinConfig
 
 
 class ComponentFactory:
@@ -48,6 +51,7 @@ class ComponentFactory:
         component_name: str,
         instance_name: str,
         config_dict: dict[str, Any] | None = None,
+        join_config: JoinConfig | None = None,
     ) -> Component[Any]:
         """Create a component instance from registry and configuration.
 
@@ -64,6 +68,7 @@ class ComponentFactory:
                           (used as component.name).
             config_dict: Configuration values to pass to the component.
                         If None, an empty dict is used.
+            join_config: Optional join configuration for Joiner components.
 
         Returns:
             A new component instance with validated configuration.
@@ -99,6 +104,20 @@ class ComponentFactory:
                 f"Invalid configuration for component '{instance_name}' "
                 f"(type: {component_name}): {e}"
             ) from e
+
+        # Check if this is a Joiner subclass
+        from flowforge.components.joining.joiner import Joiner
+
+        if issubclass(component_class, Joiner):
+            if join_config is None:
+                raise PipelineConfigError(
+                    f"Joiner '{instance_name}' requires 'join' configuration"
+                )
+            return component_class(
+                name=instance_name,
+                config=config,
+                join_config=join_config,
+            )
 
         # Create and return component instance
         return component_class(name=instance_name, config=config)
