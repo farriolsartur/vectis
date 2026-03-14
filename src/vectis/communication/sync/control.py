@@ -141,7 +141,7 @@ class ZmqControlChannel(ControlChannel):
         except ImportError as e:
             raise ImportError(
                 "pyzmq package is required for ZMQ control channels. "
-                "Install with: pip install vectis[distributed]"
+                "Install with: pip install pyvectis[distributed]"
             ) from e
 
     async def connect(self) -> None:

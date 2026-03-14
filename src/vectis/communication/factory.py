@@ -284,7 +284,7 @@ class ChannelFactory:
             except ImportError as e:
                 raise ImportError(
                     "pyzmq package is required for distributed channels. "
-                    "Install with: pip install vectis[distributed]"
+                    "Install with: pip install pyvectis[distributed]"
                 ) from e
         return self._zmq_context
 

@@ -18,7 +18,7 @@ class MessagePackSerializer(Serializer):
     Requires the optional 'msgpack' dependency.
 
     Note:
-        Install with: pip install vectis[msgpack]
+        Install with: pip install pyvectis[msgpack]
 
     Example:
         >>> serializer = MessagePackSerializer()
@@ -45,7 +45,7 @@ class MessagePackSerializer(Serializer):
         except ImportError as e:
             raise ImportError(
                 "msgpack package is required for MessagePackSerializer. "
-                "Install with: pip install vectis[msgpack]"
+                "Install with: pip install pyvectis[msgpack]"
             ) from e
 
     def serialize(self, message: Message[Any]) -> bytes:

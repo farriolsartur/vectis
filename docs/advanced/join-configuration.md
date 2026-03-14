@@ -219,7 +219,7 @@ connections:
 For JSONPath support, install the optional dependency:
 
 ```bash
-pip install vectis[joins]
+pip install pyvectis[joins]
 ```
 
 Or install directly:

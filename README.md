@@ -16,15 +16,15 @@ Vectis enables you to build data processing pipelines by defining components and
 ## Installation
 
 ```bash
-pip install vectis
+pip install pyvectis
 ```
 
 With optional dependencies:
 
 ```bash
-pip install vectis[msgpack]      # MessagePack serialization
-pip install vectis[distributed]  # ZeroMQ for distributed execution
-pip install vectis[all]          # All optional dependencies
+pip install pyvectis[msgpack]      # MessagePack serialization
+pip install pyvectis[distributed]  # ZeroMQ for distributed execution
+pip install pyvectis[all]          # All optional dependencies
 ```
 
 ## Quick Start

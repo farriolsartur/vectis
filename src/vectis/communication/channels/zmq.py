@@ -54,7 +54,7 @@ class _ZmqBaseChannel:
         except ImportError as e:
             raise ImportError(
                 "pyzmq package is required for ZeroMQ channels. "
-                "Install with: pip install vectis[distributed]"
+                "Install with: pip install pyvectis[distributed]"
             ) from e
 
     async def _connect_with_retry(self, bind: bool, socket_type: int) -> None:

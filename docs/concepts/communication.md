@@ -169,7 +169,7 @@ global:
 ```
 
 ```bash
-pip install vectis[msgpack]
+pip install pyvectis[msgpack]
 ```
 
 **Pros:**

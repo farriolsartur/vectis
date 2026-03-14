@@ -19,7 +19,7 @@ Counter → Doubler → Printer
 ## Prerequisites
 
 - Python 3.10+
-- Vectis installed (`pip install vectis`)
+- Vectis installed (`pip install pyvectis`)
 
 ## Step 1: Create the Project
 

@@ -12,20 +12,20 @@ This guide will help you create your first Vectis pipeline in about 5 minutes.
 Install Vectis with pip:
 
 ```bash
-pip install vectis
+pip install pyvectis
 ```
 
 For additional features:
 
 ```bash
 # MessagePack serialization (faster than JSON)
-pip install vectis[msgpack]
+pip install pyvectis[msgpack]
 
 # Distributed execution with ZeroMQ
-pip install vectis[distributed]
+pip install pyvectis[distributed]
 
 # Everything
-pip install vectis[all]
+pip install pyvectis[all]
 ```
 
 ## Core Concepts

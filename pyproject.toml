@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "vectis"
+name = "pyvectis"
 version = "0.1.0"
 description = "Async component pipeline framework for data processing"
 readme = "README.md"
@@ -46,7 +46,7 @@ dev = [
     "pytest-cov>=4.0",
 ]
 all = [
-    "vectis[msgpack,distributed,joins,dev]",
+    "pyvectis[msgpack,distributed,joins,dev]",
 ]
 
 [tool.hatch.build.targets.sdist]

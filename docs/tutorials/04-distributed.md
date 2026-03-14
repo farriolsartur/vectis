@@ -13,7 +13,7 @@ This tutorial covers deploying Vectis pipelines across multiple machines using Z
 
 - Completed previous tutorials
 - Understanding of networking basics
-- ZMQ support installed: `pip install vectis[distributed]`
+- ZMQ support installed: `pip install pyvectis[distributed]`
 
 ## Why Distributed?
 
