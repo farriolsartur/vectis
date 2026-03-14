@@ -4,7 +4,7 @@ This module defines two basic components:
 - CounterProvider: A DataProvider that emits sequential integers
 - PrinterAlgorithm: An Algorithm that prints received data
 
-These components demonstrate the core FlowForge patterns:
+These components demonstrate the core Vectis patterns:
 - Pydantic configuration models
 - DataProvider with graceful shutdown
 - Algorithm with message handling
@@ -17,7 +17,7 @@ from typing import Any
 
 from pydantic import BaseModel
 
-from flowforge import (
+from vectis import (
     Algorithm,
     DataProvider,
     EmptyConfig,

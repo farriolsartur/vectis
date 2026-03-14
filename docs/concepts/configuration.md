@@ -1,6 +1,6 @@
 # Configuration Reference
 
-Complete reference for FlowForge YAML configuration files.
+Complete reference for Vectis YAML configuration files.
 
 ## Configuration Structure
 
@@ -320,7 +320,7 @@ connections:
 
 ## Validation Rules
 
-FlowForge validates configurations and reports errors:
+Vectis validates configurations and reports errors:
 
 1. **Component names must be unique** across all types
 2. **Connection sources must exist** as defined components

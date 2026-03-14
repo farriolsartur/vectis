@@ -1,6 +1,6 @@
 # Order Enrichment Example
 
-This example demonstrates **stream joins** in FlowForge. It shows how to correlate
+This example demonstrates **stream joins** in Vectis. It shows how to correlate
 data from multiple upstream sources based on a shared key.
 
 ## Overview
@@ -72,7 +72,7 @@ joiners:
 
 ## Join Modes
 
-FlowForge supports three join modes:
+Vectis supports three join modes:
 
 | Mode | Description | Use Case |
 |------|-------------|----------|
@@ -92,7 +92,7 @@ The `correlation_key_path` supports:
 
 ### Memory Management
 
-Stream joins can accumulate memory waiting for matching messages. FlowForge
+Stream joins can accumulate memory waiting for matching messages. Vectis
 provides controls to prevent unbounded growth:
 
 - `max_pending_keys`: Maximum correlation keys to buffer
@@ -111,7 +111,7 @@ When sources end, pending incomplete joins are handled based on `eos_action`:
 ## Implementing a Joiner
 
 ```python
-from flowforge.components import Joiner, joiner
+from vectis.components import Joiner, joiner
 
 @joiner("my_enricher")
 class MyEnricher(Joiner[MyConfig]):
@@ -139,7 +139,7 @@ class MyEnricher(Joiner[MyConfig]):
 Order Enrichment Pipeline - Stream Joins Demo
 ============================================================
 
-This pipeline demonstrates FlowForge stream joins:
+This pipeline demonstrates Vectis stream joins:
   - 3 data providers: orders, customers, inventory
   - 1 joiner: correlates by order_id
   - 1 processor: handles enriched orders

@@ -1,4 +1,4 @@
-"""Integration tests for FlowForge stream join pipelines.
+"""Integration tests for Vectis stream join pipelines.
 
 These tests verify end-to-end pipeline execution with joiner components,
 including multi-source joins, timeout handling, and EOS behavior.
@@ -14,7 +14,7 @@ from typing import Any
 import pytest
 from pydantic import BaseModel
 
-from flowforge import (
+from vectis import (
     Algorithm,
     DataProvider,
     EmptyConfig,
@@ -24,13 +24,13 @@ from flowforge import (
     get_component_registry,
     get_component_type_registry,
 )
-from flowforge.components import (
+from vectis.components import (
     JoinConfig,
     JoinMode,
     Joiner,
     joiner,
 )
-from flowforge.engine.engine import Engine
+from vectis.engine.engine import Engine
 
 
 # =============================================================================
@@ -69,7 +69,7 @@ def clear_registries():
     get_component_registry().clear()
     get_component_type_registry().clear()
     # Re-register built-in types
-    from flowforge.components.types import _register_builtin_types
+    from vectis.components.types import _register_builtin_types
 
     _register_builtin_types()
     yield

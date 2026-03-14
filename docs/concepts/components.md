@@ -1,6 +1,6 @@
 # Components
 
-Components are the building blocks of FlowForge pipelines. This guide covers the two main component types and how to create custom components.
+Components are the building blocks of Vectis pipelines. This guide covers the two main component types and how to create custom components.
 
 ## Component Types
 
@@ -9,7 +9,7 @@ Components are the building blocks of FlowForge pipelines. This guide covers the
 DataProviders are **source** components that generate data. They have a `run()` method that the Engine calls to start data generation.
 
 ```python
-from flowforge import DataProvider, data_provider
+from vectis import DataProvider, data_provider
 
 @data_provider("my_source")
 class MySource(DataProvider[MyConfig]):
@@ -33,7 +33,7 @@ class MySource(DataProvider[MyConfig]):
 Algorithms are **processing** components that receive and handle data. They implement `on_received_data()` to process incoming messages.
 
 ```python
-from flowforge import Algorithm, Message, algorithm
+from vectis import Algorithm, Message, algorithm
 
 @algorithm("my_processor")
 class MyProcessor(Algorithm[MyConfig]):
@@ -147,7 +147,7 @@ data_providers:
 For components that need no configuration:
 
 ```python
-from flowforge import EmptyConfig
+from vectis import EmptyConfig
 
 @algorithm("simple_printer")
 class SimplePrinter(Algorithm[EmptyConfig]):
@@ -160,8 +160,8 @@ class SimplePrinter(Algorithm[EmptyConfig]):
 Components that receive AND forward data use `SenderMixin`:
 
 ```python
-from flowforge import Algorithm, Message, algorithm
-from flowforge.components.mixins import SenderMixin
+from vectis import Algorithm, Message, algorithm
+from vectis.components.mixins import SenderMixin
 
 @algorithm("transform")
 class TransformAlgorithm(Algorithm[MyConfig], SenderMixin):

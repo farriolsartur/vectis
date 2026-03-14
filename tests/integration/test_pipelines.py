@@ -1,4 +1,4 @@
-"""Integration tests for FlowForge pipelines.
+"""Integration tests for Vectis pipelines.
 
 These tests verify end-to-end pipeline execution with various topologies
 and configurations.
@@ -12,7 +12,7 @@ from typing import Any
 import pytest
 from pydantic import BaseModel
 
-from flowforge import (
+from vectis import (
     Algorithm,
     DataProvider,
     EmptyConfig,
@@ -22,7 +22,7 @@ from flowforge import (
     get_component_registry,
     get_component_type_registry,
 )
-from flowforge.engine.engine import Engine
+from vectis.engine.engine import Engine
 
 
 # =============================================================================
@@ -54,7 +54,7 @@ def clear_registries():
     get_component_registry().clear()
     get_component_type_registry().clear()
     # Re-register built-in types
-    from flowforge.components.types import _register_builtin_types
+    from vectis.components.types import _register_builtin_types
 
     _register_builtin_types()
     yield

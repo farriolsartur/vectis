@@ -1,6 +1,6 @@
 """Custom Component Type Example.
 
-This module demonstrates how to add a new component type to FlowForge:
+This module demonstrates how to add a new component type to Vectis:
 - Processor: custom component type that both receives and sends data
 - MultiplierProcessor: transforms incoming values and forwards them
 - CounterProvider: produces integer values
@@ -20,7 +20,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from flowforge import (
+from vectis import (
     Algorithm,
     DataProvider,
     EmptyConfig,
@@ -28,9 +28,9 @@ from flowforge import (
     algorithm,
     data_provider,
 )
-from flowforge.components.base import Component, ConfigT
-from flowforge.components.mixins import ProcessorMixin
-from flowforge.components.registry import get_component_type_registry
+from vectis.components.base import Component, ConfigT
+from vectis.components.mixins import ProcessorMixin
+from vectis.components.registry import get_component_type_registry
 
 
 class Processor(Component[ConfigT], ProcessorMixin, ABC):

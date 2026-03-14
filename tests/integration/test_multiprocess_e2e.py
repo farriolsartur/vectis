@@ -16,16 +16,16 @@ from typing import Any
 
 import pytest
 
-from flowforge import (
+from vectis import (
     Message,
     get_component_registry,
     get_component_type_registry,
 )
-from flowforge.communication.channels.multiprocess import (
+from vectis.communication.channels.multiprocess import (
     MultiprocessInputChannel,
     MultiprocessOutputChannel,
 )
-from flowforge.communication.serialization.json_serializer import JSONSerializer
+from vectis.communication.serialization.json_serializer import JSONSerializer
 
 
 # =============================================================================
@@ -38,7 +38,7 @@ def clear_registries():
     """Clear registries before and after each test."""
     get_component_registry().clear()
     get_component_type_registry().clear()
-    from flowforge.components.types import _register_builtin_types
+    from vectis.components.types import _register_builtin_types
 
     _register_builtin_types()
     yield
@@ -135,8 +135,8 @@ def _engine_worker_entry(
         sys.path.insert(0, project_root)
 
     # Import and register components
-    from flowforge import get_component_registry, get_component_type_registry
-    from flowforge.components.types import _register_builtin_types
+    from vectis import get_component_registry, get_component_type_registry
+    from vectis.components.types import _register_builtin_types
 
     get_component_registry().clear()
     get_component_type_registry().clear()
@@ -148,7 +148,7 @@ def _engine_worker_entry(
     register_mp_test_components()
 
     async def run():
-        from flowforge.engine.engine import Engine
+        from vectis.engine.engine import Engine
 
         try:
             engine = Engine(config_path, worker_name=worker_name)
@@ -574,7 +574,7 @@ class TestMultiprocessPipelineEndToEnd:
         This test verifies the pipeline structure works correctly.
         For actual multiprocess execution, see test_two_worker_actual_processes.
         """
-        from flowforge.engine.engine import Engine
+        from vectis.engine.engine import Engine
 
         # Import and register test components (must happen after clear_registries fixture)
         from tests.integration._mp_test_components import register_mp_test_components
@@ -628,7 +628,7 @@ connections:
     @pytest.mark.slow
     async def test_three_stage_pipeline_message_flow(self, tmp_path):
         """Test: Three-stage pipeline with passthrough."""
-        from flowforge.engine.engine import Engine
+        from vectis.engine.engine import Engine
 
         # Register test components (handles case where registry was cleared by fixture)
         from tests.integration._mp_test_components import register_mp_test_components
@@ -694,8 +694,8 @@ class TestManagerQueueIntegration:
     @pytest.mark.asyncio
     async def test_channel_factory_multiprocess_queue(self):
         """Test: ChannelFactory creates functional multiprocess queues."""
-        from flowforge.communication.factory import ChannelFactory
-        from flowforge.communication.enums import TransportType
+        from vectis.communication.factory import ChannelFactory
+        from vectis.communication.enums import TransportType
 
         factory = ChannelFactory(
             transport_config={
@@ -743,7 +743,7 @@ class TestMultiprocessErrorHandling:
     @pytest.mark.asyncio
     async def test_channel_closed_error(self, json_serializer):
         """Test: ChannelClosedError when operating on closed channel."""
-        from flowforge.exceptions import ChannelClosedError
+        from vectis.exceptions import ChannelClosedError
 
         mp_queue: mp.Queue = mp.Queue(maxsize=100)
 

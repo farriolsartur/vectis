@@ -1,4 +1,4 @@
-"""Tests for FlowForge multiprocess channels."""
+"""Tests for Vectis multiprocess channels."""
 
 from __future__ import annotations
 
@@ -9,15 +9,15 @@ from typing import Any
 
 import pytest
 
-from flowforge import Message
-from flowforge.communication.channels.multiprocess import (
+from vectis import Message
+from vectis.communication.channels.multiprocess import (
     AsyncQueueWrapper,
     MultiprocessInputChannel,
     MultiprocessOutputChannel,
 )
-from flowforge.communication.enums import BackpressureMode
-from flowforge.communication.serialization.json_serializer import JSONSerializer
-from flowforge.exceptions import BackpressureDroppedError, ChannelClosedError
+from vectis.communication.enums import BackpressureMode
+from vectis.communication.serialization.json_serializer import JSONSerializer
+from vectis.exceptions import BackpressureDroppedError, ChannelClosedError
 
 
 # =============================================================================
@@ -422,7 +422,7 @@ class TestMultiprocessChannelIntegration:
         await output_channel.send(eos_msg)
 
         # Receive and verify types
-        from flowforge import MessageType
+        from vectis import MessageType
 
         received_data = await input_channel.receive()
         assert received_data.message_type == MessageType.DATA

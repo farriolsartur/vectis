@@ -95,7 +95,7 @@ async def on_stop(self) -> None:
 ## Expected Output
 
 ```
-FlowForge ETL Pipeline Example
+Vectis ETL Pipeline Example
 ============================================================
 Pipeline: DataSource -> Transformer -> Loader
 

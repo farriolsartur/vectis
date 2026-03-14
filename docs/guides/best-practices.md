@@ -1,6 +1,6 @@
 # Best Practices
 
-Guidelines for building robust, performant FlowForge pipelines.
+Guidelines for building robust, performant Vectis pipelines.
 
 ## Component Design
 

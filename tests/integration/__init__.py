@@ -1,1 +1,1 @@
-"""Integration tests for FlowForge pipelines."""
+"""Integration tests for Vectis pipelines."""

@@ -13,7 +13,7 @@ from typing import Any
 import pytest
 from pydantic import BaseModel
 
-from flowforge import (
+from vectis import (
     Algorithm,
     DataProvider,
     EmptyConfig,
@@ -23,19 +23,19 @@ from flowforge import (
     get_component_registry,
     get_component_type_registry,
 )
-from flowforge.components.mixins import SenderMixin
-from flowforge.communication.channels.inprocess import (
+from vectis.components.mixins import SenderMixin
+from vectis.communication.channels.inprocess import (
     InProcessInputChannel,
     InProcessOutputChannel,
 )
-from flowforge.communication.channels.multiprocess import (
+from vectis.communication.channels.multiprocess import (
     MultiprocessInputChannel,
     MultiprocessOutputChannel,
 )
-from flowforge.communication.enums import TransportType
-from flowforge.communication.factory import ChannelFactory
-from flowforge.config.loader import ConfigLoader
-from flowforge.engine.topology import ResolvedChannel, TopologyResolver
+from vectis.communication.enums import TransportType
+from vectis.communication.factory import ChannelFactory
+from vectis.config.loader import ConfigLoader
+from vectis.engine.topology import ResolvedChannel, TopologyResolver
 
 
 # =============================================================================
@@ -74,7 +74,7 @@ def clear_registries():
     """Clear registries before and after each test."""
     get_component_registry().clear()
     get_component_type_registry().clear()
-    from flowforge.components.types import _register_builtin_types
+    from vectis.components.types import _register_builtin_types
 
     _register_builtin_types()
     yield
@@ -199,7 +199,7 @@ connections:
 @pytest.fixture
 def json_serializer():
     """JSON serializer for channel tests."""
-    from flowforge.communication.serialization.json_serializer import JSONSerializer
+    from vectis.communication.serialization.json_serializer import JSONSerializer
 
     return JSONSerializer()
 
@@ -409,7 +409,7 @@ class TestMixedTopologyChannelCreation:
     @pytest.mark.skipif(not zmq_available(), reason="pyzmq not installed")
     def test_channel_factory_creates_zmq_channels(self, json_serializer):
         """Test: Factory creates ZMQ channel instances for DISTRIBUTED."""
-        from flowforge.communication.channels.zmq import (
+        from vectis.communication.channels.zmq import (
             ZmqInputChannel,
             ZmqOutputChannel,
         )
@@ -468,7 +468,7 @@ class TestMixedTopologyMessageFlow:
         2. With force_inprocess=True, message flow logic works correctly
         3. All messages traverse from source through passthrough stages to collector
         """
-        from flowforge.engine.engine import Engine
+        from vectis.engine.engine import Engine
 
         config_file = tmp_path / "pipeline.yaml"
         config_file.write_text(mixed_topology_yaml)
@@ -560,7 +560,7 @@ connections:
   - source: passthrough2
     targets: [collector]
 """
-        from flowforge.engine.engine import Engine
+        from vectis.engine.engine import Engine
 
         config_file = tmp_path / "pipeline.yaml"
         config_file.write_text(yaml_content)
@@ -580,7 +580,7 @@ class TestMultiprocessActualExecution:
     @pytest.mark.asyncio
     async def test_multiprocess_channel_roundtrip(self, json_serializer):
         """Test: Real multiprocessing.Queue send/receive with serialization."""
-        from flowforge.messages import Message
+        from vectis.messages import Message
 
         mp_queue = multiprocessing.Queue(maxsize=100)
 
@@ -621,7 +621,7 @@ class TestMultiprocessActualExecution:
     @pytest.mark.asyncio
     async def test_multiprocess_channel_handles_complex_payloads(self, json_serializer):
         """Test: Multiprocess channels serialize/deserialize complex payloads."""
-        from flowforge.messages import Message
+        from vectis.messages import Message
 
         mp_queue = multiprocessing.Queue(maxsize=100)
 

@@ -1,10 +1,10 @@
-"""Tests for FlowForge retry policies."""
+"""Tests for Vectis retry policies."""
 
 from __future__ import annotations
 
 import pytest
 
-from flowforge.communication.sync.retry import ExponentialBackoffPolicy
+from vectis.communication.sync.retry import ExponentialBackoffPolicy
 
 
 class TestExponentialBackoffPolicy:

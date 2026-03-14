@@ -1,6 +1,6 @@
-# Getting Started with FlowForge
+# Getting Started with Vectis
 
-This guide will help you create your first FlowForge pipeline in about 5 minutes.
+This guide will help you create your first Vectis pipeline in about 5 minutes.
 
 ## Prerequisites
 
@@ -9,28 +9,28 @@ This guide will help you create your first FlowForge pipeline in about 5 minutes
 
 ## Installation
 
-Install FlowForge with pip:
+Install Vectis with pip:
 
 ```bash
-pip install flowforge
+pip install vectis
 ```
 
 For additional features:
 
 ```bash
 # MessagePack serialization (faster than JSON)
-pip install flowforge[msgpack]
+pip install vectis[msgpack]
 
 # Distributed execution with ZeroMQ
-pip install flowforge[distributed]
+pip install vectis[distributed]
 
 # Everything
-pip install flowforge[all]
+pip install vectis[all]
 ```
 
 ## Core Concepts
 
-FlowForge pipelines have three main parts:
+Vectis pipelines have three main parts:
 
 1. **Components**: Python classes that process data
    - `DataProvider`: Generates data (source)
@@ -50,7 +50,7 @@ Create a file `my_components.py`:
 
 ```python
 from pydantic import BaseModel
-from flowforge import (
+from vectis import (
     DataProvider,
     Algorithm,
     Message,
@@ -124,7 +124,7 @@ import asyncio
 # Import components to register them
 import my_components  # noqa
 
-from flowforge import Engine
+from vectis import Engine
 
 
 async def main():
@@ -161,11 +161,11 @@ Pipeline complete!
 
 ## Understanding What Happened
 
-1. **Component Registration**: The `@data_provider` and `@algorithm` decorators registered our components with FlowForge.
+1. **Component Registration**: The `@data_provider` and `@algorithm` decorators registered our components with Vectis.
 
 2. **Configuration Loading**: The Engine loaded `pipeline.yaml` and validated it.
 
-3. **Pipeline Construction**: FlowForge created instances of our components and connected them.
+3. **Pipeline Construction**: Vectis created instances of our components and connected them.
 
 4. **Execution**:
    - `on_start()` was called on all components (if defined)
@@ -260,7 +260,7 @@ class MyAlgorithm(Algorithm[MyConfig]):
 ### Processor Template (Receive + Forward)
 
 ```python
-from flowforge.components.mixins import SenderMixin
+from vectis.components.mixins import SenderMixin
 
 @algorithm("my_processor")
 class MyProcessor(Algorithm[MyConfig], SenderMixin):

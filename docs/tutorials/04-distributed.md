@@ -1,6 +1,6 @@
 # Tutorial 4: Distributed Pipelines
 
-This tutorial covers deploying FlowForge pipelines across multiple machines using ZeroMQ.
+This tutorial covers deploying Vectis pipelines across multiple machines using ZeroMQ.
 
 ## What You'll Learn
 
@@ -13,7 +13,7 @@ This tutorial covers deploying FlowForge pipelines across multiple machines usin
 
 - Completed previous tutorials
 - Understanding of networking basics
-- ZMQ support installed: `pip install flowforge[distributed]`
+- ZMQ support installed: `pip install vectis[distributed]`
 
 ## Why Distributed?
 
@@ -42,7 +42,7 @@ import socket
 import time
 from pydantic import BaseModel, Field
 
-from flowforge import (
+from vectis import (
     DataProvider,
     Algorithm,
     Message,
@@ -260,7 +260,7 @@ import os
 # Import components
 import components  # noqa
 
-from flowforge import Engine
+from vectis import Engine
 
 
 def parse_args():
@@ -402,7 +402,7 @@ Processor2 (PUSH) ──────────▶
 
 ### Startup Synchronization
 
-FlowForge uses retry with exponential backoff:
+Vectis uses retry with exponential backoff:
 
 ```yaml
 global:

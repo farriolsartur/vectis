@@ -1,4 +1,4 @@
-"""Tests for FlowForge protocol definitions."""
+"""Tests for Vectis protocol definitions."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ from typing import Any, Awaitable, Callable
 
 import pytest
 
-from flowforge import (
+from vectis import (
     ChannelGroup,
     ControlChannel,
     InputChannel,
@@ -15,7 +15,7 @@ from flowforge import (
     Serializer,
     Triggerable,
 )
-from flowforge.messages import Message
+from vectis.messages import Message
 
 
 class TestOutputChannelProtocol:

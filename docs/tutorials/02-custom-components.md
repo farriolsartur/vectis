@@ -13,7 +13,7 @@ This tutorial covers advanced component patterns including typed configs, lifecy
 ## Prerequisites
 
 - Completed [Tutorial 1: Simple Pipeline](01-simple-pipeline.md)
-- Understanding of basic FlowForge concepts
+- Understanding of basic Vectis concepts
 
 ## Project Setup
 
@@ -32,14 +32,14 @@ Create `components.py` with typed configs:
 from typing import Literal
 from pydantic import BaseModel, Field, field_validator
 
-from flowforge import (
+from vectis import (
     DataProvider,
     Algorithm,
     Message,
     data_provider,
     algorithm,
 )
-from flowforge.components.mixins import SenderMixin
+from vectis.components.mixins import SenderMixin
 
 
 # ============================================================
@@ -341,7 +341,7 @@ Create `run.py`:
 import asyncio
 import components  # noqa
 
-from flowforge import Engine
+from vectis import Engine
 
 
 async def main():

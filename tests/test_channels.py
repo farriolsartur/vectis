@@ -1,4 +1,4 @@
-"""Tests for FlowForge Phase 3: In-Process Communication.
+"""Tests for Vectis Phase 3: In-Process Communication.
 
 This module tests:
 - Serializers (JSON, MessagePack)
@@ -16,8 +16,8 @@ from typing import Any
 
 import pytest
 
-from flowforge import Message, MessageType
-from flowforge.communication import (
+from vectis import Message, MessageType
+from vectis.communication import (
     ChannelFactory,
     CompetingChannelGroup,
     CompetingStrategy,
@@ -38,7 +38,7 @@ def _create_channel_pair(
     """Create a channel pair using the factory."""
     factory = ChannelFactory()
     return factory.create_inprocess_pair(queue_size=queue_size, name=name)
-from flowforge.exceptions import ChannelClosedError
+from vectis.exceptions import ChannelClosedError
 
 
 # =============================================================================
@@ -147,7 +147,7 @@ class TestMessagePackSerializer:
     )
     def test_serialize_returns_bytes(self, sample_data_message: Message[Any]) -> None:
         """Serialize should return bytes."""
-        from flowforge.communication import MessagePackSerializer
+        from vectis.communication import MessagePackSerializer
 
         serializer = MessagePackSerializer()
         result = serializer.serialize(sample_data_message)
@@ -159,7 +159,7 @@ class TestMessagePackSerializer:
     )
     def test_roundtrip_preserves_data(self, sample_data_message: Message[Any]) -> None:
         """Serialize/deserialize should preserve message data."""
-        from flowforge.communication import MessagePackSerializer
+        from vectis.communication import MessagePackSerializer
 
         serializer = MessagePackSerializer()
         data = serializer.serialize(sample_data_message)
@@ -174,7 +174,7 @@ class TestMessagePackSerializer:
     )
     def test_more_compact_than_json(self, sample_data_message: Message[Any]) -> None:
         """MessagePack should be more compact than JSON."""
-        from flowforge.communication import MessagePackSerializer
+        from vectis.communication import MessagePackSerializer
 
         json_serializer = JSONSerializer()
         msgpack_serializer = MessagePackSerializer()

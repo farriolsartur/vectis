@@ -1,6 +1,6 @@
 # Communication
 
-This guide explains how FlowForge components communicate: transport types, distribution modes, and serialization options.
+This guide explains how Vectis components communicate: transport types, distribution modes, and serialization options.
 
 ## Overview
 
@@ -169,7 +169,7 @@ global:
 ```
 
 ```bash
-pip install flowforge[msgpack]
+pip install vectis[msgpack]
 ```
 
 **Pros:**
@@ -252,7 +252,7 @@ global:
 
 ### Port Assignment
 
-FlowForge automatically assigns ports based on connection topology. You can override specific ports:
+Vectis automatically assigns ports based on connection topology. You can override specific ports:
 
 ```yaml
 connections:
@@ -290,7 +290,7 @@ global:
 
 ## Channel Groups
 
-Internally, FlowForge uses channel groups to manage distribution:
+Internally, Vectis uses channel groups to manage distribution:
 
 ```
 ┌─────────────────────────────────────────────┐

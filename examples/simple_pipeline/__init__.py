@@ -1,6 +1,6 @@
 """Simple Pipeline Example.
 
-A minimal FlowForge pipeline demonstrating:
+A minimal Vectis pipeline demonstrating:
 - DataProvider: Generates sequential numbers
 - Algorithm: Receives and processes data
 

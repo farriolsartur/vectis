@@ -1,6 +1,6 @@
 # Error Handling Guide
 
-Patterns for handling errors, failures, and recovery in FlowForge pipelines.
+Patterns for handling errors, failures, and recovery in Vectis pipelines.
 
 ## Error Types
 

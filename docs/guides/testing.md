@@ -1,6 +1,6 @@
 # Testing Guide
 
-Strategies and patterns for testing FlowForge pipelines.
+Strategies and patterns for testing Vectis pipelines.
 
 ## Testing Levels
 
@@ -97,7 +97,7 @@ async def test_data_provider_handles_stop_request(mock_channel_group):
 ### Testing Algorithms
 
 ```python
-from flowforge import Message
+from vectis import Message
 
 
 @pytest.fixture
@@ -221,7 +221,7 @@ Run full pipelines locally for testing:
 import pytest
 from pathlib import Path
 
-from flowforge import Engine, get_component_registry, get_component_type_registry
+from vectis import Engine, get_component_registry, get_component_type_registry
 
 
 @pytest.fixture(autouse=True)
@@ -230,7 +230,7 @@ def clear_registries():
     get_component_registry().clear()
     get_component_type_registry().clear()
 
-    from flowforge.components.types import _register_builtin_types
+    from vectis.components.types import _register_builtin_types
     _register_builtin_types()
 
     yield
@@ -397,7 +397,7 @@ connections:
 # tests/conftest.py
 
 import pytest
-from flowforge import Algorithm, DataProvider, EmptyConfig, Message, algorithm, data_provider
+from vectis import Algorithm, DataProvider, EmptyConfig, Message, algorithm, data_provider
 
 
 @pytest.fixture
@@ -607,7 +607,7 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest tests/ -v --cov=flowforge
+          pytest tests/ -v --cov=vectis
 ```
 
 ## Best Practices

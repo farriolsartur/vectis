@@ -59,7 +59,7 @@ from examples.distributed_example.components import (  # noqa: F401
     DistributedProducer,
 )
 
-from flowforge import Engine
+from vectis import Engine
 
 
 def setup_logging(verbose: bool = False) -> None:
@@ -128,7 +128,7 @@ async def main() -> None:
     force_inprocess = args.worker is None
 
     print("=" * 60)
-    print("FlowForge Distributed Pipeline Example")
+    print("Vectis Distributed Pipeline Example")
     print("=" * 60)
     print(f"Config: {config_path.name}")
     print(f"Sync Strategy: {sync_label}")

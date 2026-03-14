@@ -1,6 +1,6 @@
-"""FlowForge Examples.
+"""Vectis Examples.
 
-This package contains runnable examples demonstrating FlowForge features.
+This package contains runnable examples demonstrating Vectis features.
 Each example is a self-contained package with:
 - components.py: Component definitions
 - pipeline.yaml: Pipeline configuration

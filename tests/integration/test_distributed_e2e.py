@@ -13,17 +13,17 @@ from typing import Any
 
 import pytest
 
-from flowforge import (
+from vectis import (
     Message,
     get_component_registry,
     get_component_type_registry,
 )
-from flowforge.communication.enums import (
+from vectis.communication.enums import (
     BackpressureMode,
     DistributionMode,
     TransportType,
 )
-from flowforge.communication.factory import ChannelFactory
+from vectis.communication.factory import ChannelFactory
 
 
 # =============================================================================
@@ -109,7 +109,7 @@ def clear_registries():
     """Clear registries before and after each test."""
     get_component_registry().clear()
     get_component_type_registry().clear()
-    from flowforge.components.types import _register_builtin_types
+    from vectis.components.types import _register_builtin_types
 
     _register_builtin_types()
     yield
@@ -138,7 +138,7 @@ def zmq_context():
 @pytest.fixture
 def json_serializer():
     """JSON serializer for channel tests."""
-    from flowforge.communication.serialization.json_serializer import JSONSerializer
+    from vectis.communication.serialization.json_serializer import JSONSerializer
 
     return JSONSerializer()
 
@@ -156,7 +156,7 @@ class TestZmqChannelEndToEnd:
         self, unique_port, zmq_context, json_serializer
     ):
         """Test: COMPETING mode (PUSH/PULL) with actual socket communication."""
-        from flowforge.communication.channels.zmq import (
+        from vectis.communication.channels.zmq import (
             ZmqInputChannel,
             ZmqOutputChannel,
         )
@@ -213,7 +213,7 @@ class TestZmqChannelEndToEnd:
         self, unique_port, zmq_context, json_serializer
     ):
         """Test: FAN_OUT mode (PUB/SUB) with actual socket communication."""
-        from flowforge.communication.channels.zmq import (
+        from vectis.communication.channels.zmq import (
             ZmqInputChannel,
             ZmqOutputChannel,
         )
@@ -270,7 +270,7 @@ class TestZmqChannelEndToEnd:
         self, unique_port, zmq_context, json_serializer
     ):
         """Test: Message ordering is preserved over ZMQ."""
-        from flowforge.communication.channels.zmq import (
+        from vectis.communication.channels.zmq import (
             ZmqInputChannel,
             ZmqOutputChannel,
         )
@@ -321,7 +321,7 @@ class TestZmqChannelEndToEnd:
         self, unique_port, zmq_context, json_serializer
     ):
         """Test: Complex payloads serialize/deserialize correctly over ZMQ."""
-        from flowforge.communication.channels.zmq import (
+        from vectis.communication.channels.zmq import (
             ZmqInputChannel,
             ZmqOutputChannel,
         )
@@ -386,7 +386,7 @@ class TestZmqChannelEndToEnd:
         self, unique_port, zmq_context, json_serializer
     ):
         """Test: END_OF_STREAM messages are transmitted correctly."""
-        from flowforge.communication.channels.zmq import (
+        from vectis.communication.channels.zmq import (
             ZmqInputChannel,
             ZmqOutputChannel,
         )
@@ -531,7 +531,7 @@ class TestZmqPipelineEndToEnd:
     @pytest.mark.asyncio
     async def test_two_component_pipeline_over_zmq(self, tmp_path, unique_port):
         """Test: Two-component pipeline communicating via actual ZMQ."""
-        from flowforge.engine.engine import Engine
+        from vectis.engine.engine import Engine
 
         # Import and register test components (registration needed after clear_registries)
         from tests.integration._mp_test_components import (
@@ -594,7 +594,7 @@ connections:
     @pytest.mark.asyncio
     async def test_fan_out_pipeline_simulation(self, tmp_path, unique_port):
         """Test: Fan-out topology with multiple collectors."""
-        from flowforge.engine.engine import Engine
+        from vectis.engine.engine import Engine
 
         # Import and register test components (registration needed after clear_registries)
         from tests.integration._mp_test_components import (
@@ -665,8 +665,8 @@ connections:
     @pytest.mark.asyncio
     async def test_zmq_direct_socket_pipeline(self, unique_port, zmq_context):
         """Test: Full message flow using direct ZMQ sockets (no Engine)."""
-        from flowforge.communication.serialization.json_serializer import JSONSerializer
-        from flowforge.communication.channels.zmq import (
+        from vectis.communication.serialization.json_serializer import JSONSerializer
+        from vectis.communication.channels.zmq import (
             ZmqInputChannel,
             ZmqOutputChannel,
         )
@@ -772,8 +772,8 @@ class TestZmqErrorHandling:
         self, unique_port, zmq_context, json_serializer
     ):
         """Test: Sending on a closed channel raises ChannelClosedError."""
-        from flowforge.communication.channels.zmq import ZmqOutputChannel
-        from flowforge.exceptions import ChannelClosedError
+        from vectis.communication.channels.zmq import ZmqOutputChannel
+        from vectis.exceptions import ChannelClosedError
 
         endpoint = f"tcp://127.0.0.1:{unique_port}"
         output_ch = ZmqOutputChannel(
@@ -797,8 +797,8 @@ class TestZmqErrorHandling:
         self, unique_port, zmq_context, json_serializer
     ):
         """Test: Receiving on a closed channel raises ChannelClosedError."""
-        from flowforge.communication.channels.zmq import ZmqInputChannel
-        from flowforge.exceptions import ChannelClosedError
+        from vectis.communication.channels.zmq import ZmqInputChannel
+        from vectis.exceptions import ChannelClosedError
 
         endpoint = f"tcp://127.0.0.1:{unique_port}"
         input_ch = ZmqInputChannel(
@@ -821,7 +821,7 @@ class TestZmqErrorHandling:
         self, unique_port, zmq_context, json_serializer
     ):
         """Test: Sending without connect() raises RuntimeError."""
-        from flowforge.communication.channels.zmq import ZmqOutputChannel
+        from vectis.communication.channels.zmq import ZmqOutputChannel
 
         endpoint = f"tcp://127.0.0.1:{unique_port}"
         output_ch = ZmqOutputChannel(

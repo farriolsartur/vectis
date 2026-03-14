@@ -1,4 +1,4 @@
-"""Tests for FlowForge Phase 4: Configuration System.
+"""Tests for Vectis Phase 4: Configuration System.
 
 This module tests:
 - Pydantic configuration models
@@ -15,13 +15,13 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from flowforge.communication.enums import (
+from vectis.communication.enums import (
     BackpressureMode,
     CompetingStrategy,
     DistributionMode,
     StartupSyncStrategy,
 )
-from flowforge.config import (
+from vectis.config import (
     BackpressureConfig,
     ComponentInstanceConfig,
     ConfigLoader,
@@ -32,7 +32,7 @@ from flowforge.config import (
     TransportConfig,
     WorkerConfig,
 )
-from flowforge.exceptions import PipelineConfigError
+from vectis.exceptions import PipelineConfigError
 
 
 # =============================================================================
@@ -1167,15 +1167,15 @@ class TestConfigIntegration:
         assert config.get_component_type("printer_1") == "algorithm"
 
     def test_config_exports_from_main_module(self) -> None:
-        """Test that config classes are exported from main flowforge module."""
-        import flowforge
+        """Test that config classes are exported from main vectis module."""
+        import vectis
 
-        assert hasattr(flowforge, "ConfigLoader")
-        assert hasattr(flowforge, "PipelineConfig")
-        assert hasattr(flowforge, "GlobalConfig")
-        assert hasattr(flowforge, "ConnectionConfig")
-        assert hasattr(flowforge, "BackpressureConfig")
-        assert hasattr(flowforge, "DefaultsConfig")
-        assert hasattr(flowforge, "WorkerConfig")
-        assert hasattr(flowforge, "ComponentInstanceConfig")
-        assert hasattr(flowforge, "TransportConfig")
+        assert hasattr(vectis, "ConfigLoader")
+        assert hasattr(vectis, "PipelineConfig")
+        assert hasattr(vectis, "GlobalConfig")
+        assert hasattr(vectis, "ConnectionConfig")
+        assert hasattr(vectis, "BackpressureConfig")
+        assert hasattr(vectis, "DefaultsConfig")
+        assert hasattr(vectis, "WorkerConfig")
+        assert hasattr(vectis, "ComponentInstanceConfig")
+        assert hasattr(vectis, "TransportConfig")

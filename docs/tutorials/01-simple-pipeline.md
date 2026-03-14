@@ -19,7 +19,7 @@ Counter → Doubler → Printer
 ## Prerequisites
 
 - Python 3.10+
-- FlowForge installed (`pip install flowforge`)
+- Vectis installed (`pip install vectis`)
 
 ## Step 1: Create the Project
 
@@ -38,17 +38,17 @@ Create three files:
 Create `components.py`:
 
 ```python
-"""My first FlowForge components."""
+"""My first Vectis components."""
 
 from pydantic import BaseModel
-from flowforge import (
+from vectis import (
     DataProvider,
     Algorithm,
     Message,
     data_provider,
     algorithm,
 )
-from flowforge.components.mixins import SenderMixin
+from vectis.components.mixins import SenderMixin
 
 
 # ============================================================
@@ -187,12 +187,12 @@ import asyncio
 # Import to register components
 import components  # noqa
 
-from flowforge import Engine
+from vectis import Engine
 
 
 async def main():
     print("=" * 50)
-    print("My First FlowForge Pipeline")
+    print("My First Vectis Pipeline")
     print("=" * 50)
 
     engine = Engine("pipeline.yaml")
@@ -217,7 +217,7 @@ Expected output:
 
 ```
 ==================================================
-My First FlowForge Pipeline
+My First Vectis Pipeline
 ==================================================
 [Counter] Starting: 1 to 5
 [Printer] Result: 2

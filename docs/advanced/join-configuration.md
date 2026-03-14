@@ -1,7 +1,7 @@
 # Join Configuration Reference
 
 This document provides the complete YAML configuration reference for
-stream joins in FlowForge.
+stream joins in Vectis.
 
 ## Basic Structure
 
@@ -219,7 +219,7 @@ connections:
 For JSONPath support, install the optional dependency:
 
 ```bash
-pip install flowforge[joins]
+pip install vectis[joins]
 ```
 
 Or install directly:

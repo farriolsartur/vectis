@@ -208,3 +208,5 @@ __marimo__/
 
 dessign.md
 IMPLEMENTATION_PLAN.md
+# Ignore files with "article" anywhere in the filename
+*article*

@@ -1,4 +1,4 @@
-"""Tests for FlowForge message types."""
+"""Tests for Vectis message types."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from uuid import UUID
 import pytest
 from pydantic import BaseModel
 
-from flowforge import Message, MessageType
+from vectis import Message, MessageType
 
 
 class TestMessageType:

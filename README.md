@@ -1,8 +1,8 @@
-# FlowForge
+# Vectis
 
 **Async component pipeline framework for Python data processing**
 
-FlowForge enables you to build data processing pipelines by defining components and connecting them via configuration. It supports in-process, multiprocess, and distributed execution modes with automatic transport selection.
+Vectis enables you to build data processing pipelines by defining components and connecting them via configuration. It supports in-process, multiprocess, and distributed execution modes with automatic transport selection.
 
 ## Features
 
@@ -16,15 +16,15 @@ FlowForge enables you to build data processing pipelines by defining components 
 ## Installation
 
 ```bash
-pip install flowforge
+pip install vectis
 ```
 
 With optional dependencies:
 
 ```bash
-pip install flowforge[msgpack]      # MessagePack serialization
-pip install flowforge[distributed]  # ZeroMQ for distributed execution
-pip install flowforge[all]          # All optional dependencies
+pip install vectis[msgpack]      # MessagePack serialization
+pip install vectis[distributed]  # ZeroMQ for distributed execution
+pip install vectis[all]          # All optional dependencies
 ```
 
 ## Quick Start
@@ -33,7 +33,7 @@ pip install flowforge[all]          # All optional dependencies
 
 ```python
 from pydantic import BaseModel
-from flowforge import DataProvider, Algorithm, Message, data_provider, algorithm
+from vectis import DataProvider, Algorithm, Message, data_provider, algorithm
 
 class CounterConfig(BaseModel):
     count: int = 10
@@ -79,7 +79,7 @@ connections:
 
 ```python
 import asyncio
-from flowforge import Engine
+from vectis import Engine
 
 async def main():
     engine = Engine("pipeline.yaml")
@@ -126,7 +126,7 @@ python -m examples.simple_pipeline.run
 
 ### Transport Types
 
-FlowForge automatically selects transport based on component placement:
+Vectis automatically selects transport based on component placement:
 
 | Scenario | Transport | Performance |
 |----------|-----------|-------------|
@@ -151,8 +151,8 @@ await engine.run(force_inprocess=True)  # Run everything in one process
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/flowforge.git
-cd flowforge
+git clone https://github.com/farriolsartur/vectis.git
+cd vectis
 
 # Install in development mode
 pip install -e ".[dev]"

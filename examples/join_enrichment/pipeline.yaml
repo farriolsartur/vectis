@@ -1,6 +1,6 @@
 # Order Enrichment Pipeline
 #
-# This pipeline demonstrates stream joins in FlowForge:
+# This pipeline demonstrates stream joins in Vectis:
 # - 3 data providers generate order, customer, and inventory data
 # - A joiner correlates them by order_id
 # - A processor handles the enriched orders

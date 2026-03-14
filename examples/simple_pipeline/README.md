@@ -1,6 +1,6 @@
 # Simple Pipeline Example
 
-A minimal FlowForge pipeline demonstrating the core concepts.
+A minimal Vectis pipeline demonstrating the core concepts.
 
 ## Overview
 
@@ -28,7 +28,7 @@ python examples/simple_pipeline/run.py
 ## Expected Output
 
 ```
-FlowForge Simple Pipeline Example
+Vectis Simple Pipeline Example
 ==================================================
 Config: examples/simple_pipeline/pipeline.yaml
 

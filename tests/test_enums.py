@@ -1,10 +1,10 @@
-"""Tests for FlowForge enum types."""
+"""Tests for Vectis enum types."""
 
 from __future__ import annotations
 
 import pytest
 
-from flowforge import (
+from vectis import (
     BackpressureMode,
     CompetingStrategy,
     DistributionMode,

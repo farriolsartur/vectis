@@ -22,7 +22,7 @@ if str(_project_root) not in sys.path:
 # Import components to register them with the ComponentRegistry
 from examples.etl_pipeline.components import DataSource, Loader, Transformer  # noqa: F401
 
-from flowforge import Engine
+from vectis import Engine
 
 
 def setup_logging() -> None:
@@ -42,7 +42,7 @@ async def main() -> None:
     config_path = Path(__file__).parent / "pipeline.yaml"
 
     print("=" * 60)
-    print("FlowForge ETL Pipeline Example")
+    print("Vectis ETL Pipeline Example")
     print("=" * 60)
     print(f"Config: {config_path}")
     print()

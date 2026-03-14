@@ -33,7 +33,7 @@ ignoring worker assignments.
 
 ### Distributed Mode (Production)
 
-FlowForge supports two startup synchronization strategies:
+Vectis supports two startup synchronization strategies:
 
 #### Strategy 1: Retry Backoff (Default)
 
@@ -189,7 +189,7 @@ This:
 ## Expected Output (Local Mode)
 
 ```
-FlowForge Distributed Pipeline Example
+Vectis Distributed Pipeline Example
 ============================================================
 Mode: LOCAL (all components in one process)
 

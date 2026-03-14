@@ -1,4 +1,4 @@
-"""Tests for FlowForge ZMQ channels."""
+"""Tests for Vectis ZMQ channels."""
 
 from __future__ import annotations
 
@@ -7,9 +7,9 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from flowforge import Message
-from flowforge.communication.enums import BackpressureMode, DistributionMode
-from flowforge.exceptions import BackpressureDroppedError, ChannelClosedError
+from vectis import Message
+from vectis.communication.enums import BackpressureMode, DistributionMode
+from vectis.exceptions import BackpressureDroppedError, ChannelClosedError
 
 
 def zmq_available() -> bool:
@@ -28,7 +28,7 @@ pytestmark = pytest.mark.skipif(not zmq_available(), reason="pyzmq not installed
 
 # Only import if zmq is available
 if zmq_available():
-    from flowforge.communication.channels.zmq import ZmqInputChannel, ZmqOutputChannel
+    from vectis.communication.channels.zmq import ZmqInputChannel, ZmqOutputChannel
 
 
 # =============================================================================

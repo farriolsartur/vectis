@@ -1,6 +1,6 @@
 # Custom Component Type Example
 
-This example demonstrates how to add a new component type to FlowForge.
+This example demonstrates how to add a new component type to Vectis.
 
 ## Overview
 
@@ -75,7 +75,7 @@ class MultiplierProcessor(Processor[MultiplyConfig]):
 ## Expected Output
 
 ```
-FlowForge Custom Component Type Example
+Vectis Custom Component Type Example
 ============================================================
 Config: examples/custom_component_type/pipeline.yaml
 

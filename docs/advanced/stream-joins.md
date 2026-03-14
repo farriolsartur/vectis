@@ -25,7 +25,7 @@ Source C ──▶ {order_id: "123", ...}  ─┘
 
 ### Join Modes
 
-FlowForge supports three join modes:
+Vectis supports three join modes:
 
 | Mode | Emit Condition | Use Case |
 |------|----------------|----------|
@@ -70,7 +70,7 @@ join:
 
 ### Memory Management
 
-Stream joins buffer messages while waiting for matches. FlowForge provides
+Stream joins buffer messages while waiting for matches. Vectis provides
 controls to prevent unbounded memory growth:
 
 - **max_pending_keys**: Maximum correlation keys to track simultaneously
@@ -94,7 +94,7 @@ with pending incomplete joins:
 ### Creating a Joiner
 
 ```python
-from flowforge.components import Joiner, joiner
+from vectis.components import Joiner, joiner
 
 @joiner("order_enricher")
 class OrderEnricher(Joiner[MyConfig]):

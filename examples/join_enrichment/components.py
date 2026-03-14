@@ -15,7 +15,7 @@ from typing import Any
 
 from pydantic import BaseModel
 
-from flowforge import (
+from vectis import (
     Algorithm,
     DataProvider,
     EmptyConfig,
@@ -23,7 +23,7 @@ from flowforge import (
     algorithm,
     data_provider,
 )
-from flowforge.components import Joiner, joiner
+from vectis.components import Joiner, joiner
 
 
 # =============================================================================

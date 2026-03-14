@@ -26,7 +26,7 @@ from examples.custom_component_type.components import (  # noqa: F401
     PrinterAlgorithm,
 )
 
-from flowforge import Engine
+from vectis import Engine
 
 
 def setup_logging() -> None:
@@ -45,7 +45,7 @@ async def main() -> None:
     config_path = Path(__file__).parent / "pipeline.yaml"
 
     print("=" * 60)
-    print("FlowForge Custom Component Type Example")
+    print("Vectis Custom Component Type Example")
     print("=" * 60)
     print(f"Config: {config_path}")
     print()

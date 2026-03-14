@@ -1,4 +1,4 @@
-"""Tests for FlowForge Phase 2: Component System.
+"""Tests for Vectis Phase 2: Component System.
 
 This module tests:
 - Component base class and config extraction
@@ -18,7 +18,7 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from pydantic import BaseModel
 
-from flowforge import (
+from vectis import (
     Algorithm,
     Component,
     ComponentFactory,

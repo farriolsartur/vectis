@@ -1,6 +1,6 @@
 # Join Patterns
 
-This guide covers common patterns for implementing stream joins in FlowForge.
+This guide covers common patterns for implementing stream joins in Vectis.
 
 ## API Enrichment
 

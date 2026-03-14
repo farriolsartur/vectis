@@ -1,6 +1,6 @@
 # Execution Modes
 
-FlowForge supports multiple execution modes for different deployment scenarios. This guide helps you choose the right mode.
+Vectis supports multiple execution modes for different deployment scenarios. This guide helps you choose the right mode.
 
 ## Overview
 
@@ -187,7 +187,7 @@ else:
 
 ## Mixed Topologies
 
-FlowForge automatically selects transport based on worker placement:
+Vectis automatically selects transport based on worker placement:
 
 ```yaml
 workers:
@@ -276,7 +276,7 @@ Worker script:
 ```python
 import argparse
 import asyncio
-from flowforge import Engine
+from vectis import Engine
 
 # Import components
 import my_components  # noqa

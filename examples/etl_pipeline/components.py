@@ -23,7 +23,7 @@ from pydantic import BaseModel, Field, ValidationError
 
 from .payloads import RawRecord, TransformedRecord
 
-from flowforge import (
+from vectis import (
     Algorithm,
     DataProvider,
     EmptyConfig,
@@ -31,7 +31,7 @@ from flowforge import (
     algorithm,
     data_provider,
 )
-from flowforge.components.mixins import SenderMixin
+from vectis.components.mixins import SenderMixin
 
 
 class DataSourceConfig(BaseModel):

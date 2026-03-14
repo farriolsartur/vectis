@@ -1,4 +1,4 @@
-"""Tests for FlowForge Phase 5: Engine."""
+"""Tests for Vectis Phase 5: Engine."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from typing import Any
 import pytest
 from pydantic import BaseModel
 
-from flowforge import (
+from vectis import (
     Algorithm,
     DataProvider,
     EmptyConfig,
@@ -19,16 +19,16 @@ from flowforge import (
     get_component_registry,
     get_component_type_registry,
 )
-from flowforge.communication.enums import (
+from vectis.communication.enums import (
     CompetingStrategy,
     DistributionMode,
     TransportType,
 )
-from flowforge.config.loader import ConfigLoader
-from flowforge.engine.context import WorkerContext
-from flowforge.engine.engine import Engine
-from flowforge.engine.topology import ResolvedChannel, TopologyResolver
-from flowforge.exceptions import PipelineConfigError
+from vectis.config.loader import ConfigLoader
+from vectis.engine.context import WorkerContext
+from vectis.engine.engine import Engine
+from vectis.engine.topology import ResolvedChannel, TopologyResolver
+from vectis.exceptions import PipelineConfigError
 
 
 # =============================================================================
@@ -54,7 +54,7 @@ def clear_registries():
     get_component_registry().clear()
     get_component_type_registry().clear()
     # Re-register built-in types
-    from flowforge.components.types import _register_builtin_types
+    from vectis.components.types import _register_builtin_types
 
     _register_builtin_types()
     yield
@@ -842,7 +842,7 @@ class TestEngineShutdown:
         """Test that shutdown respects timeout for stuck providers."""
         # Clear registries again to ensure clean state
         get_component_registry().clear()
-        from flowforge.components.types import _register_builtin_types
+        from vectis.components.types import _register_builtin_types
 
         _register_builtin_types()
 

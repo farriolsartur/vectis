@@ -1,4 +1,4 @@
-"""Tests for FlowForge control channels."""
+"""Tests for Vectis control channels."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from flowforge.communication.sync.control import MultiprocessControlChannel
+from vectis.communication.sync.control import MultiprocessControlChannel
 
 
 def zmq_available() -> bool:
@@ -32,7 +32,7 @@ class TestMultiprocessControlChannel:
     async def test_broadcast_ready_marks_components(self):
         """Components marked ready."""
         with patch(
-            "flowforge.communication.sync.control._ControlManager"
+            "vectis.communication.sync.control._ControlManager"
         ) as MockManager:
             mock_manager = MagicMock()
             mock_manager.connect = MagicMock()
@@ -67,7 +67,7 @@ class TestMultiprocessControlChannel:
     async def test_wait_for_dependencies_returns_true_when_ready(self):
         """Returns True when all dependencies ready."""
         with patch(
-            "flowforge.communication.sync.control._ControlManager"
+            "vectis.communication.sync.control._ControlManager"
         ) as MockManager:
             mock_manager = MagicMock()
             mock_manager.connect = MagicMock()
@@ -90,7 +90,7 @@ class TestMultiprocessControlChannel:
     async def test_wait_for_dependencies_timeout(self):
         """Returns False on timeout."""
         with patch(
-            "flowforge.communication.sync.control._ControlManager"
+            "vectis.communication.sync.control._ControlManager"
         ) as MockManager:
             mock_manager = MagicMock()
             mock_manager.connect = MagicMock()
@@ -117,7 +117,7 @@ class TestMultiprocessControlChannel:
     async def test_wait_for_dependencies_empty_list(self):
         """Returns True immediately for empty list."""
         with patch(
-            "flowforge.communication.sync.control._ControlManager"
+            "vectis.communication.sync.control._ControlManager"
         ) as MockManager:
             mock_manager = MagicMock()
             mock_manager.connect = MagicMock()
@@ -163,7 +163,7 @@ class TestZmqControlChannel:
         """PUB bound."""
         import zmq.asyncio
 
-        from flowforge.communication.sync.control import ZmqControlChannel
+        from vectis.communication.sync.control import ZmqControlChannel
 
         mock_context = MagicMock(spec=zmq.asyncio.Context)
         mock_pub_socket = MagicMock()
@@ -200,7 +200,7 @@ class TestZmqControlChannel:
         """Subscribes to 'ready:' prefix."""
         import zmq.asyncio
 
-        from flowforge.communication.sync.control import ZmqControlChannel
+        from vectis.communication.sync.control import ZmqControlChannel
 
         mock_context = MagicMock(spec=zmq.asyncio.Context)
         mock_pub_socket = MagicMock()
@@ -237,7 +237,7 @@ class TestZmqControlChannel:
         """Messages sent for each component."""
         import zmq.asyncio
 
-        from flowforge.communication.sync.control import ZmqControlChannel
+        from vectis.communication.sync.control import ZmqControlChannel
 
         mock_context = MagicMock(spec=zmq.asyncio.Context)
         mock_pub_socket = AsyncMock()
@@ -267,7 +267,7 @@ class TestZmqControlChannel:
         """Format is 'ready:<name>'."""
         import zmq.asyncio
 
-        from flowforge.communication.sync.control import ZmqControlChannel
+        from vectis.communication.sync.control import ZmqControlChannel
 
         mock_context = MagicMock(spec=zmq.asyncio.Context)
         mock_pub_socket = AsyncMock()
@@ -296,7 +296,7 @@ class TestZmqControlChannel:
         """RuntimeError when not connected."""
         import zmq.asyncio
 
-        from flowforge.communication.sync.control import ZmqControlChannel
+        from vectis.communication.sync.control import ZmqControlChannel
 
         mock_context = MagicMock(spec=zmq.asyncio.Context)
 
@@ -314,7 +314,7 @@ class TestZmqControlChannel:
         """Returns False on timeout."""
         import zmq.asyncio
 
-        from flowforge.communication.sync.control import ZmqControlChannel
+        from vectis.communication.sync.control import ZmqControlChannel
 
         mock_context = MagicMock(spec=zmq.asyncio.Context)
         mock_pub_socket = MagicMock()
@@ -346,7 +346,7 @@ class TestZmqControlChannel:
         """Returns True immediately for empty list."""
         import zmq.asyncio
 
-        from flowforge.communication.sync.control import ZmqControlChannel
+        from vectis.communication.sync.control import ZmqControlChannel
 
         mock_context = MagicMock(spec=zmq.asyncio.Context)
         mock_pub_socket = MagicMock()
@@ -375,7 +375,7 @@ class TestZmqControlChannel:
         """Returns True when all ready messages received."""
         import zmq.asyncio
 
-        from flowforge.communication.sync.control import ZmqControlChannel
+        from vectis.communication.sync.control import ZmqControlChannel
 
         mock_context = MagicMock(spec=zmq.asyncio.Context)
         mock_pub_socket = MagicMock()
@@ -412,7 +412,7 @@ class TestZmqControlChannel:
         """Both sockets closed."""
         import zmq.asyncio
 
-        from flowforge.communication.sync.control import ZmqControlChannel
+        from vectis.communication.sync.control import ZmqControlChannel
 
         mock_context = MagicMock(spec=zmq.asyncio.Context)
         mock_pub_socket = MagicMock()

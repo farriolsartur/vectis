@@ -40,7 +40,7 @@ import time
 import os
 from pydantic import BaseModel, Field
 
-from flowforge import (
+from vectis import (
     DataProvider,
     Algorithm,
     Message,
@@ -230,7 +230,7 @@ import os
 # Import components
 import components  # noqa
 
-from flowforge import Engine
+from vectis import Engine
 
 
 def parse_args():

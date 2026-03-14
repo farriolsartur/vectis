@@ -1,4 +1,4 @@
-"""Tests for FlowForge examples.
+"""Tests for Vectis examples.
 
 These tests validate that all examples in the examples/ directory
 execute correctly and produce expected results.
@@ -12,9 +12,9 @@ from pathlib import Path
 
 import pytest
 
-from flowforge import get_component_registry, get_component_type_registry
-from flowforge.config.loader import ConfigLoader
-from flowforge.engine.engine import Engine
+from vectis import get_component_registry, get_component_type_registry
+from vectis.config.loader import ConfigLoader
+from vectis.engine.engine import Engine
 
 
 # =============================================================================
@@ -28,7 +28,7 @@ def clear_registries():
     get_component_registry().clear()
     get_component_type_registry().clear()
     # Re-register built-in types
-    from flowforge.components.types import _register_builtin_types
+    from vectis.components.types import _register_builtin_types
 
     _register_builtin_types()
 

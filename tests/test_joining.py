@@ -1,4 +1,4 @@
-"""Unit tests for FlowForge stream joining module."""
+"""Unit tests for Vectis stream joining module."""
 
 from __future__ import annotations
 
@@ -8,15 +8,15 @@ from typing import Any
 import pytest
 from pydantic import ValidationError
 
-from flowforge import Message
-from flowforge.components.joining import (
+from vectis import Message
+from vectis.components.joining import (
     EOSAction,
     EvictionPolicy,
     JoinBuffer,
     JoinConfig,
     JoinMode,
 )
-from flowforge.components.registry import (
+from vectis.components.registry import (
     get_component_registry,
     get_component_type_registry,
 )
@@ -392,35 +392,35 @@ class TestCorrelationKeyExtraction:
 
     def test_simple_key_extraction(self):
         """Test simple key extraction from dict payload."""
-        from flowforge.components.joining.joiner import _extract_key_simple
+        from vectis.components.joining.joiner import _extract_key_simple
 
         payload = {"order_id": "123", "name": "test"}
         assert _extract_key_simple(payload, "order_id") == "123"
 
     def test_nested_key_extraction(self):
         """Test nested key extraction using dot notation."""
-        from flowforge.components.joining.joiner import _extract_key_simple
+        from vectis.components.joining.joiner import _extract_key_simple
 
         payload = {"order": {"id": "123", "status": "pending"}}
         assert _extract_key_simple(payload, "order.id") == "123"
 
     def test_deeply_nested_key_extraction(self):
         """Test deeply nested key extraction."""
-        from flowforge.components.joining.joiner import _extract_key_simple
+        from vectis.components.joining.joiner import _extract_key_simple
 
         payload = {"data": {"order": {"details": {"id": "123"}}}}
         assert _extract_key_simple(payload, "data.order.details.id") == "123"
 
     def test_key_not_found_returns_none(self):
         """Test that missing key returns None."""
-        from flowforge.components.joining.joiner import _extract_key_simple
+        from vectis.components.joining.joiner import _extract_key_simple
 
         payload = {"order_id": "123"}
         assert _extract_key_simple(payload, "missing") is None
 
     def test_nested_key_not_found_returns_none(self):
         """Test that missing nested key returns None."""
-        from flowforge.components.joining.joiner import _extract_key_simple
+        from vectis.components.joining.joiner import _extract_key_simple
 
         payload = {"order": {"id": "123"}}
         assert _extract_key_simple(payload, "order.missing") is None
@@ -439,21 +439,21 @@ class TestJSONPathExtraction:
 
     def test_jsonpath_extraction(self, skip_if_no_jsonpath):
         """Test JSONPath extraction."""
-        from flowforge.components.joining.joiner import _extract_key_jsonpath
+        from vectis.components.joining.joiner import _extract_key_jsonpath
 
         payload = {"order": {"id": "123"}}
         assert _extract_key_jsonpath(payload, "$.order.id") == "123"
 
     def test_jsonpath_array_extraction(self, skip_if_no_jsonpath):
         """Test JSONPath extraction from array."""
-        from flowforge.components.joining.joiner import _extract_key_jsonpath
+        from vectis.components.joining.joiner import _extract_key_jsonpath
 
         payload = {"orders": [{"id": "123"}, {"id": "456"}]}
         assert _extract_key_jsonpath(payload, "$.orders[0].id") == "123"
 
     def test_jsonpath_not_found_returns_none(self, skip_if_no_jsonpath):
         """Test that missing JSONPath returns None."""
-        from flowforge.components.joining.joiner import _extract_key_jsonpath
+        from vectis.components.joining.joiner import _extract_key_jsonpath
 
         payload = {"order": {"id": "123"}}
         assert _extract_key_jsonpath(payload, "$.missing.path") is None
@@ -474,13 +474,13 @@ class TestJoinerRegistration:
 
     def test_joiner_decorator_exists(self):
         """Test that @joiner decorator is available."""
-        from flowforge.components import joiner
+        from vectis.components import joiner
 
         assert callable(joiner)
 
     def test_joiner_in_exports(self):
         """Test that Joiner is exported from components."""
-        from flowforge.components import Joiner, JoinerMixin
+        from vectis.components import Joiner, JoinerMixin
 
         assert Joiner is not None
         assert JoinerMixin is not None
@@ -627,7 +627,7 @@ class TestJoinerEOSHandling:
         """Create a concrete Joiner subclass for testing."""
         from unittest.mock import AsyncMock, patch
 
-        from flowforge.components.joining.joiner import Joiner
+        from vectis.components.joining.joiner import Joiner
         from pydantic import BaseModel
 
         class StubConfig(BaseModel):

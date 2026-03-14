@@ -1,4 +1,4 @@
-"""Shared pytest fixtures for FlowForge tests."""
+"""Shared pytest fixtures for Vectis tests."""
 
 from __future__ import annotations
 
@@ -7,9 +7,9 @@ from uuid import UUID
 
 import pytest
 
-from flowforge import Message, MessageType
-from flowforge.communication.serialization.json_serializer import JSONSerializer
-from flowforge.communication.sync.retry import ExponentialBackoffPolicy
+from vectis import Message, MessageType
+from vectis.communication.serialization.json_serializer import JSONSerializer
+from vectis.communication.sync.retry import ExponentialBackoffPolicy
 
 
 @pytest.fixture

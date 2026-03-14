@@ -1,32 +1,32 @@
-"""Tests for FlowForge exception types."""
+"""Tests for Vectis exception types."""
 
 from __future__ import annotations
 
 import pytest
 
-from flowforge import ComponentNotFoundError, FlowForgeError, PipelineConfigError
+from vectis import ComponentNotFoundError, VectisError, PipelineConfigError
 
 
-class TestFlowForgeError:
-    """Tests for the base FlowForgeError exception."""
+class TestVectisError:
+    """Tests for the base VectisError exception."""
 
     def test_is_exception(self) -> None:
-        """FlowForgeError should be an Exception subclass."""
-        assert issubclass(FlowForgeError, Exception)
+        """VectisError should be an Exception subclass."""
+        assert issubclass(VectisError, Exception)
 
     def test_can_raise_and_catch(self) -> None:
-        """FlowForgeError can be raised and caught."""
-        with pytest.raises(FlowForgeError) as exc_info:
-            raise FlowForgeError("test error")
+        """VectisError can be raised and caught."""
+        with pytest.raises(VectisError) as exc_info:
+            raise VectisError("test error")
         assert str(exc_info.value) == "test error"
 
 
 class TestPipelineConfigError:
     """Tests for PipelineConfigError exception."""
 
-    def test_is_flowforge_error(self) -> None:
-        """PipelineConfigError should be a FlowForgeError subclass."""
-        assert issubclass(PipelineConfigError, FlowForgeError)
+    def test_is_vectis_error(self) -> None:
+        """PipelineConfigError should be a VectisError subclass."""
+        assert issubclass(PipelineConfigError, VectisError)
 
     def test_can_raise_with_message(self) -> None:
         """PipelineConfigError can be raised with a message."""
@@ -34,18 +34,18 @@ class TestPipelineConfigError:
             raise PipelineConfigError("Invalid YAML syntax")
         assert "Invalid YAML syntax" in str(exc_info.value)
 
-    def test_caught_as_flowforge_error(self) -> None:
-        """PipelineConfigError can be caught as FlowForgeError."""
-        with pytest.raises(FlowForgeError):
+    def test_caught_as_vectis_error(self) -> None:
+        """PipelineConfigError can be caught as VectisError."""
+        with pytest.raises(VectisError):
             raise PipelineConfigError("config error")
 
 
 class TestComponentNotFoundError:
     """Tests for ComponentNotFoundError exception."""
 
-    def test_is_flowforge_error(self) -> None:
-        """ComponentNotFoundError should be a FlowForgeError subclass."""
-        assert issubclass(ComponentNotFoundError, FlowForgeError)
+    def test_is_vectis_error(self) -> None:
+        """ComponentNotFoundError should be a VectisError subclass."""
+        assert issubclass(ComponentNotFoundError, VectisError)
 
     def test_stores_component_name(self) -> None:
         """ComponentNotFoundError should store the component name."""
@@ -66,7 +66,7 @@ class TestComponentNotFoundError:
         )
         assert "Custom error" in str(error)
 
-    def test_caught_as_flowforge_error(self) -> None:
-        """ComponentNotFoundError can be caught as FlowForgeError."""
-        with pytest.raises(FlowForgeError):
+    def test_caught_as_vectis_error(self) -> None:
+        """ComponentNotFoundError can be caught as VectisError."""
+        with pytest.raises(VectisError):
             raise ComponentNotFoundError("missing_component")

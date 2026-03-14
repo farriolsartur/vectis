@@ -18,7 +18,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from flowforge import (
+from vectis import (
     Algorithm,
     DataProvider,
     Message,

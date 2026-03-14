@@ -10,7 +10,7 @@ from typing import Any
 
 from pydantic import BaseModel
 
-from flowforge import (
+from vectis import (
     Algorithm,
     DataProvider,
     EmptyConfig,
@@ -18,7 +18,7 @@ from flowforge import (
     algorithm,
     data_provider,
 )
-from flowforge.components.mixins import SenderMixin
+from vectis.components.mixins import SenderMixin
 
 
 class MPTestCounterConfig(BaseModel):
@@ -97,7 +97,7 @@ def register_mp_test_components() -> None:
     registry was cleared (e.g., by test fixtures). This handles the case
     where the module was already imported but the registry was reset.
     """
-    from flowforge import get_component_registry
+    from vectis import get_component_registry
 
     registry = get_component_registry()
 

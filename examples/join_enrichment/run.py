@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Run the order enrichment pipeline.
 
-This script demonstrates stream joins in FlowForge by running a pipeline
+This script demonstrates stream joins in Vectis by running a pipeline
 that joins data from three sources (orders, customers, inventory) using
 a shared correlation key (order_id).
 
@@ -18,7 +18,7 @@ from pathlib import Path
 # Import components to register them with the global registry
 import components  # noqa: F401
 
-from flowforge import Engine
+from vectis import Engine
 
 
 async def main() -> None:
@@ -30,7 +30,7 @@ async def main() -> None:
     print("Order Enrichment Pipeline - Stream Joins Demo")
     print("=" * 60)
     print()
-    print("This pipeline demonstrates FlowForge stream joins:")
+    print("This pipeline demonstrates Vectis stream joins:")
     print("  - 3 data providers: orders, customers, inventory")
     print("  - 1 joiner: correlates by order_id")
     print("  - 1 processor: handles enriched orders")
